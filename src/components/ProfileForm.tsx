@@ -34,7 +34,7 @@ export function ProfileForm() {
           log.error('No authenticated user found');
           return;
         }
-        log.debug('User data retrieved', { userId: userData.user.id });
+        log.info('User data retrieved', { userId: userData.user.id });
         
         setUser(userData.user);
         
@@ -45,7 +45,7 @@ export function ProfileForm() {
           .eq('id', userData.user.id)
           .single();
         
-        log.debug('Profile data retrieved', { 
+        log.info('Profile data retrieved', { 
           hasProfile: !!profileData,
           fullName: profileData?.full_name 
         });
