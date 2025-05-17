@@ -259,6 +259,7 @@ export function SettingsPage() {
                 <Shield className="h-5 w-5 mr-3" />
                 Security
               </button>
+              {/*
               <button
                 onClick={() => setActiveTab('billing')}
                 className={`flex items-center px-4 py-3 text-sm font-medium ${
@@ -270,6 +271,7 @@ export function SettingsPage() {
                 <CreditCard className="h-5 w-5 mr-3" />
                 Billing
               </button>
+              */}
             </nav>
           </div>
         </div>
