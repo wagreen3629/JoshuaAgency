@@ -288,7 +288,7 @@ export function HelpPage() {
           <Button 
             variant="outline" 
             className="justify-start"
-            onClick={() => handleNavigation('/help/clients')}
+            onClick={() => handleNavigation('/help')}
           >
             <Book className="h-4 w-4 mr-2" />
             Getting Started Guide
@@ -304,7 +304,7 @@ export function HelpPage() {
           <Button 
             variant="outline" 
             className="justify-start"
-            onClick={() => handleNavigation('/help/rides')}
+            onClick={() => handleNavigation('/help')}
           >
             <FileText className="h-4 w-4 mr-2" />
             Documentation
@@ -312,7 +312,7 @@ export function HelpPage() {
           <Button 
             variant="outline" 
             className="justify-start"
-            onClick={() => handleNavigation('/help/faq')}
+            onClick={() => handleNavigation('/help')}
           >
             <Users className="h-4 w-4 mr-2" />
             Community Forum
