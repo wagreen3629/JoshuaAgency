@@ -260,6 +260,7 @@ function DashboardPage({ children }: DashboardPageProps) {
     try {
       console.log('Handling Sign Out');
       await signOut();
+      console.log('Navigating to Home Page');
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
