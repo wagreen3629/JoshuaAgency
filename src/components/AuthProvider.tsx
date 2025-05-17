@@ -129,7 +129,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (event === 'SIGNED_IN' && session?.user) {
           setUser(session.user);
-          navigate(lastPath || '/dashboard');
+          // Only navigate if we're on the login or home page
+          if (location.pathname === '/login' || location.pathname === '/') {
+            navigate(lastPath || '/dashboard');
+          }
         } else if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
           try {
             console.log('Starting sign out cleanup');
