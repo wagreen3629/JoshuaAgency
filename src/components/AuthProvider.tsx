@@ -32,19 +32,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [location.pathname]);
 
   const handleAuthError = async (error: any) => {
-    console.error('Auth error:', error.message);
+    console.error('Auth error details:', {
+      message: error.message,
+      error: error.error,
+      status: error.status,
+      path: location.pathname
+    });
+    
     const isRefreshTokenError = 
       error.message?.includes('refresh_token_not_found') || 
       error.error?.message?.includes('refresh_token_not_found') ||
       error.message?.includes('Invalid Refresh Token');
     
     if (isRefreshTokenError) {
-      console.log('Invalid refresh token detected - clearing auth state');
+      console.log('Invalid refresh token detected - starting cleanup process');
+      console.log('1. Clearing user state');
       setUser(null);
       setLoading(false);
+      
+      console.log('2. Clearing auth state');
       await clearAuthState();
+      
+      console.log('3. Removing session storage');
       sessionStorage.removeItem(SESSION_STORAGE_KEY);
+      
+      console.log('4. Checking current path:', location.pathname);
       if (location.pathname !== '/login' && location.pathname !== '/') {
+        console.log('5. Redirecting to login page');
         navigate('/login');
       }
       return true;
@@ -55,9 +69,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const restoreSession = async () => {
       try {
+        console.log('Attempting to restore session');
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
+          console.log('Error during session restore:', error);
           const handled = await handleAuthError(error);
           if (!handled) {
             throw error;
@@ -66,16 +82,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (session?.user) {
-          console.log('Restored session user:', session.user);
+          console.log('Session restored successfully for user:', session.user.id);
           setUser(session.user);
           
           // Restore last path or go to dashboard
           if (location.pathname === '/login' || location.pathname === '/') {
             const lastPath = sessionStorage.getItem(SESSION_STORAGE_KEY) || '/dashboard';
+            console.log('Redirecting to last path:', lastPath);
             navigate(lastPath);
           }
         } else {
-          console.log('No session found');
+          console.log('No valid session found - clearing state');
           setUser(null);
           setLoading(false);
           await clearAuthState();
@@ -115,15 +132,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           navigate(lastPath || '/dashboard');
         } else if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
           try {
-            console.log('Clearing State');
+            console.log('Starting sign out cleanup');
             setUser(null);
             setLoading(false);
             await clearAuthState();
             sessionStorage.removeItem(SESSION_STORAGE_KEY);
-            console.log('Navigating to Login');
+            console.log('Navigating to login page');
             navigate('/login');
           } catch (err) {
-            console.error('Error clearing auth state:', err);
+            console.error('Error during sign out cleanup:', err);
             setUser(null);
             setLoading(false);
             await clearAuthState();
