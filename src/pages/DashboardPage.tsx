@@ -258,6 +258,7 @@ function DashboardPage({ children }: DashboardPageProps) {
 
   const handleSignOut = async () => {
     try {
+      console.log('Handling Sign Out');
       await signOut();
       navigate('/');
     } catch (error) {
