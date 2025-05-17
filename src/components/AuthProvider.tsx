@@ -131,7 +131,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(session.user);
           // Only navigate if we're on the login or home page
           if (location.pathname === '/login' || location.pathname === '/') {
-            navigate(lastPath || '/dashboard');
+            //navigate(lastPath || '/dashboard');
+            try {
+                  navigate(lastPath || '/dashboard');
+                } catch (error) {
+                  console.error('Navigation error:', error);
+                }
           }
         } else if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
           try {
