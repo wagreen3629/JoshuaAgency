@@ -133,8 +133,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (location.pathname === '/login' || location.pathname === '/') {
             //navigate(lastPath || '/dashboard');
             try {
-                  console.log('Navigating to: ', lastPath, ' /dashboard');
-                  navigate(lastPath || '/dashboard');
+                  console.log('Navigating to: Dashboard');
+                  navigate('/dashboard');
                 } catch (error) {
                   console.error('Navigation error:', error);
                 }
