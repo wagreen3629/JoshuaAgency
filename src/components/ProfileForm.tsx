@@ -2,6 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Button } from './Button';
 
+// Logging utility
+const log = {
+  info: (message: string, data?: any) => {
+    console.log(`[ProfileForm] ${message}`, data ? data : '');
+  },
+  error: (message: string, error?: any) => {
+    console.error(`[ProfileForm] Error: ${message}`, error ? error : '');
+  },
+  debug: (message: string, data?: any) => {
+    console.debug(`[ProfileForm] Debug: ${message}`, data ? data : '');
+  }
+};
+
 export function ProfileForm() {
   const [loading, setLoading] = useState(false);
   const [fullName, setFullName] = useState('');
@@ -12,11 +25,16 @@ export function ProfileForm() {
     const fetchUserAndProfile = async () => {
       try {
         setLoading(true);
+        log.info('Fetching user and profile data');
         
         // Get authenticated user
         const { data: userData } = await supabase.auth.getUser();
         
-        if (!userData.user) return;
+        if (!userData.user) {
+          log.error('No authenticated user found');
+          return;
+        }
+        log.debug('User data retrieved', { userId: userData.user.id });
         
         setUser(userData.user);
         
@@ -27,13 +45,19 @@ export function ProfileForm() {
           .eq('id', userData.user.id)
           .single();
         
+        log.debug('Profile data retrieved', { 
+          hasProfile: !!profileData,
+          fullName: profileData?.full_name 
+        });
+        
         if (profileData) {
           setFullName(profileData.full_name || '');
         }
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        log.error('Failed to fetch profile data', error);
       } finally {
         setLoading(false);
+        log.info('Profile data fetch completed');
       }
     };
 
@@ -43,11 +67,15 @@ export function ProfileForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) return;
+    if (!user) {
+      log.error('Cannot submit form - no authenticated user');
+      return;
+    }
     
     try {
       setLoading(true);
       setMessage(null);
+      log.info('Updating profile', { userId: user.id, fullName });
       
       const { error } = await supabase
         .from('profiles')
@@ -57,19 +85,25 @@ export function ProfileForm() {
         })
         .eq('id', user.id);
       
-      if (error) throw error;
+      if (error) {
+        log.error('Failed to update profile in database', error);
+        throw error;
+      }
       
+      log.info('Profile updated successfully');
       setMessage({
         type: 'success',
         text: 'Profile updated successfully!'
       });
     } catch (error: any) {
+      log.error('Error during profile update', error);
       setMessage({
         type: 'error',
         text: error.message || 'An error occurred while updating your profile.'
       });
     } finally {
       setLoading(false);
+      log.debug('Profile update completed', { success: !error });
     }
   };
 
