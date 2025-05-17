@@ -296,7 +296,7 @@ export function HelpPage() {
           <Button 
             variant="outline" 
             className="justify-start"
-            onClick={() => window.location.href = 'mailto:support@example.com'}
+            onClick={() => window.location.href = 'mailto:williamg@TheJoshuaAgency.com'}
           >
             <HelpCircle className="h-4 w-4 mr-2" />
             Contact Support
