@@ -143,7 +143,7 @@ export function SettingsPage() {
             </div>
           </div>
         );
-        /*
+        
       case 'billing':
         return (
           <div className="bg-white shadow rounded-lg p-6">
@@ -209,7 +209,7 @@ export function SettingsPage() {
         return <ProfileForm />;
     }
   };
-  */
+  
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
