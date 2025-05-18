@@ -622,10 +622,24 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
         
         if (!selectedClient || !selectedPickupAddress || !selectedDropoffAddress || !selectedProduct) {
           throw new Error('Missing required information to submit the ride.');
-        }       
+        }
+        
+        // Get user profile data including phone
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+  
+        if (profileError) {
+          throw profileError;
+        }
+  
+        setProfile(profileData);
     
         const rideSubmissionData = {
           clientId: selectedClient.id,
+          contactPhone: profile?.phone || '',
           guest: {
             email: selectedClient.email || '',
             first_name: firstName,
