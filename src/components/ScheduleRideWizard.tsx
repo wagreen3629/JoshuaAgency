@@ -13,31 +13,7 @@ import {
 import { createInitialRideData, updateRideData } from '../lib/ride-tracking';
 import { submitRideRequest } from '../lib/ride-submission';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth'; // ✅ Import the useAuth hook
-
-const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }) => {
-  const { user } = useAuth(); // ✅ Get authenticated user
-  const [profile, setProfile] = useState(null);
-
-  const loadProfile = useCallback(async () => {
-    if (!user?.id) return;
-    try {
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      if (profileError) throw profileError;
-      setProfile(profileData);
-    } catch (err) {
-      console.error('Failed to load profile:', err);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
-
+import { useAuth } from '../hooks/useAuth';
 
 // List of supported languages
 const LANGUAGES = [
@@ -60,6 +36,28 @@ interface ScheduleRideWizardProps {
 }
 
 const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleRideWizardProps) => {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState(null);
+
+  const loadProfile = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      if (profileError) throw profileError;
+      setProfile(profileData);
+    } catch (err) {
+      console.error('Failed to load profile:', err);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
+
   // Form state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -107,7 +105,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [selectedFareId, setSelectedFareId] = useState<string>('');
   const [rideType, setRideType] = useState('on-demand');
-  //const [rideDate, setRideDate] = useState<string>('');
   const [rideDate, setRideDate] = useState(() => new Date().toISOString().split('T')[0]);
 
   const getCurrentTimeString = () => {
@@ -360,7 +357,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
     
     // Clear any existing error messages when submitting
     setError(null);
-	  console.log('CurrentStep:', currentStep);
+    console.log('CurrentStep:', currentStep);
     
     if (currentStep === 1) {
       // Validate required fields for step 1
@@ -461,7 +458,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
     }
     else if (currentStep === 3) {
       // Validate zone selection
-	    console.log('CurrentStep:', currentStep);
+      console.log('CurrentStep:', currentStep);
       if (!rideType) {
         setError('Please select a ride type');
         return;
@@ -509,32 +506,32 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
 
         // Log stored zone token
         console.log('Using stored zone token:', { zoneId: selectedZone, token: zoneToken });
-		
-		    //Scheduling and ride variables
+    
+        //Scheduling and ride variables
         const rideProductData = [{
-      			rideType: rideType as 'immediate' | 'scheduled' | 'flexible' | 'hourly',
-      			scheduledDate: rideType === 'immediate'
-      				? undefined
-      				: {
-      					date: rideDate,
-      					time: rideTime,
-      					timezone: rideTimezone
-      				}
-      		}];
+            rideType: rideType as 'immediate' | 'scheduled' | 'flexible' | 'hourly',
+            scheduledDate: rideType === 'immediate'
+              ? undefined
+              : {
+                  date: rideDate,
+                  time: rideTime,
+                  timezone: rideTimezone
+                }
+          }];
         
         console.log('Ride Data Info:', rideProductData);
 
         // Prepare request payload
         const payload = [{
-		      rideType: String(rideType),
-		      deferred_pickup_date: String(rideDate),
-		      scheduling_pickup_time: String(rideTime),
+          rideType: String(rideType),
+          deferred_pickup_date: String(rideDate),
+          scheduling_pickup_time: String(rideTime),
           token: zoneToken,
-		      pickupAddress: String(pickupAddr.address),
+          pickupAddress: String(pickupAddr.address),
           pickupLat: String(pickupAddr.latitude),
           pickupLong: String(pickupAddr.longitude),
           dropoffLat: parseFloat(String(dropoffAddr.latitude)),
-		      dropOffAddress: String(dropoffAddr.address),
+          dropOffAddress: String(dropoffAddr.address),
           dropoffLong: parseFloat(String(dropoffAddr.longitude)),
           waypoints: waypoints
         }];
@@ -582,7 +579,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
         console.log('=== Product fetch process completed ===');
       }
     } else if (currentStep === 4) {
-	  console.log('CurrentStep:', currentStep);
+      console.log('CurrentStep:', currentStep);
       // Validate product selection
       if (!selectedProduct) {
         setError('Please select a product to continue');
@@ -608,7 +605,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
     }
       
     else if (currentStep === 4) {
-	  console.log('CurrentStep:', currentStep);
+      console.log('CurrentStep:', currentStep);
       if (!selectedProduct) {
         setError('Please select a service type');
         return;
@@ -618,7 +615,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
       
     }
     else if (currentStep === 3) {
-	  console.log('CurrentStep:', currentStep);
+      console.log('CurrentStep:', currentStep);
       if (!rideType) {
         setError('Please select a ride type');
         return;
@@ -630,20 +627,12 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
       try {
         setIsSubmitting(true);
 
-        {/* William Green */}
-
         console.log('Processing Final submission');
         console.log('selectedClient: ',selectedClient);
         console.log('selectedPickupAddress: ',selectedPickupAddress);
         console.log('selectedDropoffAddress: ',selectedDropoffAddress);
         console.log('selectedProduct: ',selectedProduct);
         console.log('selectedFareId: ',selectedFareId);
-
-        /*
-        if (!selectedClient || !selectedPickupAddress || !selectedDropoffAddress || !selectedProduct || !selectedFareId) {
-          throw new Error('Missing required information to submit the ride.');
-        }
-        */
         
         if (!selectedClient || !selectedPickupAddress || !selectedDropoffAddress || !selectedProduct) {
           throw new Error('Missing required information to submit the ride.');
@@ -671,7 +660,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
             last_name: lastName,
             phone_number: phoneNumber
           },
-          fareId: selectedFareId, // You can populate this if available from estimates
+          fareId: selectedFareId,
           dropoff: {
             latitude: selectedDropoffAddress.latitude!,
             longitude: selectedDropoffAddress.longitude!
@@ -690,7 +679,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
             };
           }),
           rideType: rideType as 'immediate' | 'scheduled' | 'flexible' | 'hourly',
-         //scheduledDate: rideType === 'immediate' ? undefined : new Date(rideDate)
           scheduledDate: rideType === 'immediate'
             ? undefined
             : {
@@ -710,8 +698,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
         console.log('Status:', response.status);
         console.log('Status:', response.message);
         
-        {/* William Green */}
-        
         navigate('/rides/confirmation', {
           state: {
             rideData: {
@@ -730,8 +716,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
       } finally {
         setIsSubmitting(false);
       }
-      
-      //console.log(Ride Submission Data:', rideSubmissionData);
     }
   };
 
@@ -1000,25 +984,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
             </select>
           </div>
 
-        {/* Return Trip Option */}
- 
-          {/*
-          <div className="mt-6">
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="bookReturnTrip"
-              checked={bookReturnTrip}
-              onChange={handleReturnTripToggle}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="bookReturnTrip" className="ml-2 block text-sm font-medium text-gray-700">
-              Book Return Trip
-            </label>
-          </div>
-        </div>
-        */}
-          
           {/* Return Trip Fields */}
           {bookReturnTrip && (
             <div className="mt-6 space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -1274,7 +1239,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
                         checked={selectedProduct === item.product.product_id}
                          onChange={() => {
                             setSelectedProduct(item.product.product_id);
-                            setSelectedFareId(item.estimate.fare_id); // ✅ set the fare_id
+                            setSelectedFareId(item.estimate.fare_id);
                           }}
                         className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                       />
@@ -1394,8 +1359,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
                           checked={rideType === 'scheduled'}
                           onChange={(e) => {
                             setRideType(e.target.value);
-                            // Clear date when switching to scheduled
-                            //setRideDate('');
                           }}
                           className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                         />
@@ -1431,8 +1394,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
                           checked={rideType === 'flexible'}
                           onChange={(e) => {
                             setRideType(e.target.value);
-                            // Clear date when switching to flexible
-                            //setRideDate('');
                           }}
                           className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                         />
@@ -1525,8 +1486,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
                 </div>
               </div>
 
-
-
               {/* Note to Driver */}
               <div>
                 <label htmlFor="driver-note" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1563,7 +1522,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
                 </p>
               </div>
             </div>
-
 
             {/* Client Information Summary */}
             <div>
@@ -1617,9 +1575,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
               </div>
             </div>
 
-
-            {/* William Green - Start*/}
-
             {/* Return Trip Details */}
             {bookReturnTrip && (
               <div className="bg-gray-50 p-4 rounded-lg space-y-4">
@@ -1640,10 +1595,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
                 </div>
               </div>
             )}
-
-            {/* William Green - End*/}
-
-            
 
             {/* Product Information */}
             <div>
@@ -1748,4 +1699,3 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
 };
 
 export { ScheduleRideWizard };
-
