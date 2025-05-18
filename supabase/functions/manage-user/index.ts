@@ -11,6 +11,7 @@ interface UserData {
   password?: string
   firstName: string
   lastName: string
+  phone: string
   role: string
   status: string
   id?: string
@@ -77,7 +78,7 @@ Deno.serve(async (req) => {
           last_name: userData.lastName,
           full_name: `${userData.firstName} ${userData.lastName}`.trim(),
           role: userData.role,
-          status: userData.status
+          status: userData.status,
           phone: userData.phone
         }
       })
