@@ -78,6 +78,7 @@ Deno.serve(async (req) => {
           full_name: `${userData.firstName} ${userData.lastName}`.trim(),
           role: userData.role,
           status: userData.status
+          phone: userData.phone
         }
       })
 
@@ -101,6 +102,7 @@ Deno.serve(async (req) => {
           full_name: `${userData.firstName} ${userData.lastName}`.trim(),
           role: userData.role,
           status: userData.status,
+          phone: userData.phone,
           updated_at: new Date().toISOString()
         })
         .eq('id', userData.id)
