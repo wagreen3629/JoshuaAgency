@@ -4,6 +4,19 @@ import { Button } from './Button';
 import { supabase } from '../lib/supabase';
 import { Toast, ToastProvider, ToastViewport, ToastTitle, ToastDescription } from './ui/toast';
 
+// Logging utility
+const log = {
+  info: (message: string, data?: any) => {
+    console.log(`[UserEditForm] ${message}`, data ? data : '');
+  },
+  error: (message: string, error?: any) => {
+    console.error(`[UserEditForm Error] ${message}`, error ? error : '');
+  },
+  debug: (message: string, data?: any) => {
+    console.debug(`[UserEditForm Debug] ${message}`, data ? data : '');
+  }
+};
+
 interface UserEditFormProps {
   user?: {
     id: string;
@@ -53,23 +66,28 @@ export function UserEditForm({ user, onSuccess, onCancel }: UserEditFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    log.info('Starting form submission', { isUpdate: !!user });
+    
     try {
       setLoading(true);
       setError(null);
 
       // Validate required fields
       if (!formData.email || (!user && !formData.password)) {
+        log.error('Missing required fields');
         throw new Error('Please fill in all required fields');
       }
 
       // Validate password match if setting password
       if (formData.password && formData.password !== formData.confirmPassword) {
+        log.error('Password mismatch');
         throw new Error('Passwords do not match');
       }
 
       // Get the current session
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
+        log.error('No active session found');
         throw new Error('Authentication required');
       }
 
@@ -86,8 +104,10 @@ export function UserEditForm({ user, onSuccess, onCancel }: UserEditFormProps) {
       };
 
       // Call the edge function to manage the user
+      log.info('Preparing to call edge function', { action: user ? 'update' : 'create' });
+      
       const edgeFunctionUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-user`;
-      console.log('Calling edge function:', edgeFunctionUrl);
+      log.debug('Edge function URL:', edgeFunctionUrl);
       
       const response = await fetch(
         edgeFunctionUrl,
@@ -106,7 +126,7 @@ export function UserEditForm({ user, onSuccess, onCancel }: UserEditFormProps) {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Edge function error:', {
+        log.error('Edge function failed', {
           status: response.status,
           statusText: response.statusText,
           errorText
@@ -116,18 +136,28 @@ export function UserEditForm({ user, onSuccess, onCancel }: UserEditFormProps) {
       const result = await response.json();
       
       if (!user) {
+        log.info('New user created successfully, resetting form');
         resetForm();
       }
       
+      log.info('Form submission completed successfully');
       onSuccess();
       
     } catch (err: any) {
-      console.error('Error saving user:', err);
+      log.error('Form submission failed', err);
       setError(err.message || 'Failed to save user. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
+  // Log initial form state
+  React.useEffect(() => {
+    log.debug('Form initialized', {
+      isUpdate: !!user,
+      initialData: formData
+    });
+  }, []);
 
   return (
     <ToastProvider>
