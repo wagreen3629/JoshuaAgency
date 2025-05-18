@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, MapPin, Clock, Calendar, Zap, CalendarClock, CalendarCheck } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Button } from './Button';
@@ -13,6 +13,30 @@ import {
 import { createInitialRideData, updateRideData } from '../lib/ride-tracking';
 import { submitRideRequest } from '../lib/ride-submission';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth'; // ✅ Import the useAuth hook
+
+const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }) => {
+  const { user } = useAuth(); // ✅ Get authenticated user
+  const [profile, setProfile] = useState(null);
+
+  const loadProfile = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      if (profileError) throw profileError;
+      setProfile(profileData);
+    } catch (err) {
+      console.error('Failed to load profile:', err);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
 
 // List of supported languages
