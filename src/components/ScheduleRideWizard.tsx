@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Clock, Calendar, Zap, CalendarClock, CalendarCheck } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 import { Button } from './Button';
 import { 
   fetchClients, 
