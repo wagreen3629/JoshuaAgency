@@ -13,7 +13,7 @@ import {
 import { createInitialRideData, updateRideData } from '../lib/ride-tracking';
 import { submitRideRequest } from '../lib/ride-submission';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../components/AuthProvider';
 
 // List of supported languages
 const LANGUAGES = [
@@ -859,7 +859,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
                           <div className="flex-shrink-0">
                             <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                               <span className="text-sm font-medium text-blue-800">
-                                {client.name.split(' ').map(n => n[0]).join('')}
+                                {client.name.split('').map(n => n[0]).join('')}
                               </span>
                             </div>
                           </div>
