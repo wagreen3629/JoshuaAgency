@@ -23,6 +23,7 @@ export function UserEditForm({ user, onSuccess, onCancel }: UserEditFormProps) {
     email: user?.email || '',
     firstName: user?.first_name || '',
     lastName: user?.last_name || '',
+    phone: user?.phone || '',
     role: user?.role || 'user',
     status: user?.status || 'Active',
     password: '',
@@ -77,6 +78,7 @@ export function UserEditForm({ user, onSuccess, onCancel }: UserEditFormProps) {
         email: formData.email,
         firstName: formData.firstName,
         lastName: formData.lastName,
+        phone: formData.phone,
         role: formData.role,
         status: formData.status,
         ...(formData.password && { password: formData.password }),
@@ -226,6 +228,20 @@ export function UserEditForm({ user, onSuccess, onCancel }: UserEditFormProps) {
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
+          </div>
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="(555) 555-5555"
+            />
           </div>
         </div>
 
