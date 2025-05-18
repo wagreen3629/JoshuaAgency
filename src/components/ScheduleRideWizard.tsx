@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, Clock, Calendar, Zap, CalendarClock, CalendarCheck } from 'lucide-react';
+import { Search, MapPin, Clock, Calendar, Zap, CalendarClock, CalendarCheck, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Button } from './Button';
+import { useAuth } from '../components/AuthProvider';
 import { 
   fetchClients, 
   fetchClientAddresses, 
@@ -13,7 +14,6 @@ import {
 import { createInitialRideData, updateRideData } from '../lib/ride-tracking';
 import { submitRideRequest } from '../lib/ride-submission';
 import { useNavigate } from 'react-router-dom';
-
 
 // List of supported languages
 const LANGUAGES = [
@@ -36,6 +36,9 @@ interface ScheduleRideWizardProps {
 }
 
 const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleRideWizardProps) => {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState<any>(null);
+  
   // Form state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -83,7 +86,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [selectedFareId, setSelectedFareId] = useState<string>('');
   const [rideType, setRideType] = useState('on-demand');
-  //const [rideDate, setRideDate] = useState<string>('');
   const [rideDate, setRideDate] = useState(() => new Date().toISOString().split('T')[0]);
 
   const getCurrentTimeString = () => {
@@ -336,7 +338,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
     
     // Clear any existing error messages when submitting
     setError(null);
-	  console.log('CurrentStep:', currentStep);
+    console.log('CurrentStep:', currentStep);
     
     if (currentStep === 1) {
       // Validate required fields for step 1
@@ -344,7 +346,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
         setError('Please fill in all required fields');
         return;
       }
-        
 
       // Get zones for pickup location when moving to step 2
       try {
@@ -395,11 +396,11 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
             setZoneToken(zone.token);
           }
           return {
-          id: zone.id,
-          label: zone.name,
-          instruction: zone.access_points?.[0]?.name || zone.name,
-          note: zone.access_points?.[0]?.description || '',
-          token: zone.token
+            id: zone.id,
+            label: zone.name,
+            instruction: zone.access_points?.[0]?.name || zone.name,
+            note: zone.access_points?.[0]?.description || '',
+            token: zone.token
           };
         });
 
@@ -423,9 +424,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
       } finally {
         setIsSubmitting(false);
       }
-    }
-    
-    else if (currentStep === 2) {
+    } else if (currentStep === 2) {
       // Validate zone selection
       if (!selectedZone) {
         setError('Please select a pickup zone');
@@ -434,10 +433,9 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
       
       setCurrentStep(3);
       
-    }
-    else if (currentStep === 3) {
+    } else if (currentStep === 3) {
       // Validate zone selection
-	    console.log('CurrentStep:', currentStep);
+      console.log('CurrentStep:', currentStep);
       if (!rideType) {
         setError('Please select a ride type');
         return;
@@ -449,7 +447,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
 
         console.log('=== Starting product fetch process ===');
         
-
         // Get coordinates for API call
         const pickupAddr = addresses.find(addr => addr.id === pickupLocation);
         const dropoffAddr = addresses.find(addr => addr.id === dropoffLocation);
@@ -485,32 +482,32 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
 
         // Log stored zone token
         console.log('Using stored zone token:', { zoneId: selectedZone, token: zoneToken });
-		
-		    //Scheduling and ride variables
+    
+        //Scheduling and ride variables
         const rideProductData = [{
-      			rideType: rideType as 'immediate' | 'scheduled' | 'flexible' | 'hourly',
-      			scheduledDate: rideType === 'immediate'
-      				? undefined
-      				: {
-      					date: rideDate,
-      					time: rideTime,
-      					timezone: rideTimezone
-      				}
-      		}];
+          rideType: rideType as 'immediate' | 'scheduled' | 'flexible' | 'hourly',
+          scheduledDate: rideType === 'immediate'
+            ? undefined
+            : {
+                date: rideDate,
+                time: rideTime,
+                timezone: rideTimezone
+              }
+        }];
         
         console.log('Ride Data Info:', rideProductData);
 
         // Prepare request payload
         const payload = [{
-		      rideType: String(rideType),
-		      deferred_pickup_date: String(rideDate),
-		      scheduling_pickup_time: String(rideTime),
+          rideType: String(rideType),
+          deferred_pickup_date: String(rideDate),
+          scheduling_pickup_time: String(rideTime),
           token: zoneToken,
-		      pickupAddress: String(pickupAddr.address),
+          pickupAddress: String(pickupAddr.address),
           pickupLat: String(pickupAddr.latitude),
           pickupLong: String(pickupAddr.longitude),
           dropoffLat: parseFloat(String(dropoffAddr.latitude)),
-		      dropOffAddress: String(dropoffAddr.address),
+          dropOffAddress: String(dropoffAddr.address),
           dropoffLong: parseFloat(String(dropoffAddr.longitude)),
           waypoints: waypoints
         }];
@@ -528,7 +525,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
 
         console.log('API response status:', response.status);
       
-
         if (!response.ok) {
           console.error('API response not OK:', {
             status: response.status,
@@ -558,7 +554,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
         console.log('=== Product fetch process completed ===');
       }
     } else if (currentStep === 4) {
-	  console.log('CurrentStep:', currentStep);
+      console.log('CurrentStep:', currentStep);
       // Validate product selection
       if (!selectedProduct) {
         setError('Please select a product to continue');
@@ -566,63 +562,27 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
       }
       
       // Progress to step 5
-      
       setCurrentStep(5);
       
-    } 
-
-      
-    else if (currentStep === 3) {
-      // Validate required fields for step 4
-      if (!rideDate) {
-        setError('Please select a date for the ride');
-        return;
-      }
-      
-      setCurrentStep(4);
-      
-    }
-      
-    else if (currentStep === 4) {
-	  console.log('CurrentStep:', currentStep);
-      if (!selectedProduct) {
-        setError('Please select a service type');
-        return;
-      }
-      
-      setCurrentStep(5);
-      
-    }
-    else if (currentStep === 3) {
-	  console.log('CurrentStep:', currentStep);
-      if (!rideType) {
-        setError('Please select a ride type');
-        return;
-      }      
-      setCurrentStep(4);      
-    }
-    else if (currentStep === 5) {
+    } else if (currentStep === 5) {
       // Handle final submission
       try {
         setIsSubmitting(true);
 
-        {/* William Green */}
-
         console.log('Processing Final submission');
-        console.log('selectedClient: ',selectedClient);
-        console.log('selectedPickupAddress: ',selectedPickupAddress);
-        console.log('selectedDropoffAddress: ',selectedDropoffAddress);
-        console.log('selectedProduct: ',selectedProduct);
-        console.log('selectedFareId: ',selectedFareId);
-
-        /*
-        if (!selectedClient || !selectedPickupAddress || !selectedDropoffAddress || !selectedProduct || !selectedFareId) {
-          throw new Error('Missing required information to submit the ride.');
-        }
-        */
+        console.log('selectedClient: ', selectedClient);
+        console.log('selectedPickupAddress: ', selectedPickupAddress);
+        console.log('selectedDropoffAddress: ', selectedDropoffAddress);
+        console.log('selectedProduct: ', selectedProduct);
+        console.log('selectedFareId: ', selectedFareId);
         
         if (!selectedClient || !selectedPickupAddress || !selectedDropoffAddress || !selectedProduct) {
           throw new Error('Missing required information to submit the ride.');
+        }
+
+        // Check if user is authenticated
+        if (!user) {
+          throw new Error('You must be logged in to submit a ride request');
         }
         
         // Get user profile data including phone
@@ -647,7 +607,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
             last_name: lastName,
             phone_number: phoneNumber
           },
-          fareId: selectedFareId, // You can populate this if available from estimates
+          fareId: selectedFareId,
           dropoff: {
             latitude: selectedDropoffAddress.latitude!,
             longitude: selectedDropoffAddress.longitude!
@@ -666,7 +626,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
             };
           }),
           rideType: rideType as 'immediate' | 'scheduled' | 'flexible' | 'hourly',
-         //scheduledDate: rideType === 'immediate' ? undefined : new Date(rideDate)
           scheduledDate: rideType === 'immediate'
             ? undefined
             : {
@@ -686,8 +645,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
         console.log('Status:', response.status);
         console.log('Status:', response.message);
         
-        {/* William Green */}
-        
         navigate('/rides/confirmation', {
           state: {
             rideData: {
@@ -706,8 +663,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
       } finally {
         setIsSubmitting(false);
       }
-      
-      //console.log(Ride Submission Data:', rideSubmissionData);
     }
   };
 
@@ -976,25 +931,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
             </select>
           </div>
 
-        {/* Return Trip Option */}
- 
-          {/*
-          <div className="mt-6">
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="bookReturnTrip"
-              checked={bookReturnTrip}
-              onChange={handleReturnTripToggle}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="bookReturnTrip" className="ml-2 block text-sm font-medium text-gray-700">
-              Book Return Trip
-            </label>
-          </div>
-        </div>
-        */}
-          
           {/* Return Trip Fields */}
           {bookReturnTrip && (
             <div className="mt-6 space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -1501,8 +1437,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
                 </div>
               </div>
 
-
-
               {/* Note to Driver */}
               <div>
                 <label htmlFor="driver-note" className="block text-sm font-medium text-gray-700 mb-1">
@@ -1539,7 +1473,6 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
                 </p>
               </div>
             </div>
-
 
             {/* Client Information Summary */}
             <div>
@@ -1584,143 +1517,4 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
                     <ul className="mt-1 space-y-1">
                       {selectedStops.map(stopId => (
                         <li key={stopId} className="text-sm font-medium text-gray-900">
-                          {addresses.find(addr => addr.id === stopId)?.address || 'N/A'}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </div>
-
-
-            {/* William Green - Start*/}
-
-            {/* Return Trip Details */}
-            {bookReturnTrip && (
-              <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Return Trip Details</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <div className="text-sm font-medium text-gray-500">Return Pickup Location</div>
-                    <div className="mt-1 text-sm text-gray-900">
-                      {returnPickupLocation?.address || 'Not selected'}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-gray-500">Return Drop-off Location</div>
-                    <div className="mt-1 text-sm text-gray-900">
-                      {returnDropoffLocation?.address || 'Not selected'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* William Green - End*/}
-
-            
-
-            {/* Product Information */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Service Details</h3>
-              <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                {products.find(p => p.product.product_id === selectedProduct) && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-sm text-gray-500">Service Type:</span>
-                      <p className="text-sm font-medium text-gray-900">
-                        {products.find(p => p.product.product_id === selectedProduct)?.product.display_name}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-500">Estimated Fare:</span>
-                      <p className="text-sm font-medium text-gray-900">
-                        {products.find(p => p.product.product_id === selectedProduct)?.estimate.fare_estimate}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-500">Estimated Duration:</span>
-                      <p className="text-sm font-medium text-gray-900">
-                        {Math.round((products.find(p => p.product.product_id === selectedProduct)?.estimate.duration || 0) / 60)} minutes
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-500">Total Distance:</span>
-                      <p className="text-sm font-medium text-gray-900">
-                        {products.find(p => p.product.product_id === selectedProduct)?.estimate.travel_distance} miles
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Schedule Information */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Schedule Details</h3>
-              <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <span className="text-sm text-gray-500">Ride Type:</span>
-                    <p className="text-sm font-medium text-gray-900">
-                      {rideType === 'on-demand' ? 'Ride on Demand' :
-                       rideType === 'scheduled' ? 'Scheduled Ride' :
-                       'Flexible Ride'}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500">Date:</span>
-                    <p className="text-sm font-medium text-gray-900">{rideDate} {rideTime} {rideTimezone}</p>
-                  </div>
-                </div>
-                {driverNote && (
-                  <div>
-                    <span className="text-sm text-gray-500">Note to Driver:</span>
-                    <p className="text-sm font-medium text-gray-900">{driverNote}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Form Actions */}
-        <div className="flex justify-end space-x-3 pt-6">
-          {currentStep > 1 && (
-            <Button
-              type="button"
-              variant="outline"
-              className="mr-auto"
-              onClick={() => setCurrentStep(prev => prev - 1)}
-            >
-              Back
-            </Button>
-          )}
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onCancel}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            className={currentStep === 5 ? 'bg-red-600 hover:bg-red-700 text-white' : ''}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Processing...' : 
-             currentStep === 1 ? 'Select Zone' : 
-             currentStep === 2 ? 'Schedule Trip' : 
-             currentStep === 3 ? 'Select Product' :
-             currentStep === 4 ? 'Review Ride' : 
-             currentStep === 5 ? 'Submit Ride' : 
-             'Next Step'}
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
-};
-
-export { ScheduleRideWizard };
+                          {addresses.find(addr => addr.id === stop
