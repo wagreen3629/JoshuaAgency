@@ -149,7 +149,9 @@ export async function submitRideRequest(data: RideSubmissionData): Promise<RideS
       }
     },
       contacts_to_notify: [
+        {
         contactPhone: data.contactPhone
+        }
       ]
     };
 
