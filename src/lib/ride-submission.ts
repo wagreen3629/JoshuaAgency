@@ -34,6 +34,7 @@ interface Guest {
 
 interface RideSubmissionData {
   clientId: string;
+  contactPhone: string;
   guest: Guest;
   fareId: string;
   dropoff: RideLocation;
@@ -147,7 +148,9 @@ export async function submitRideRequest(data: RideSubmissionData): Promise<RideS
             : ''
       }
     },
-      contacts_to_notify: []
+      contacts_to_notify: [
+        contactPhone: data.contactPhone
+      ]
     };
 
     log.info('Prepared webhook payload', payload);
