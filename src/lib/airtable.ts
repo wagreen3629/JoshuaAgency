@@ -902,6 +902,7 @@ export const fetchRides = async (): Promise<Ride[]> => {
 
     return allRecords.map(record => ({
       id: record.id,
+      OrgID: record.get('OrgID') as string,      
       clientId: record.get('Client ID') as string,
       rideNum: record.get('RideNum') as number,
       clientName: record.get('Client Name (from Client ID)') as string,
