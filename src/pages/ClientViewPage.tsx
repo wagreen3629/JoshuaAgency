@@ -22,9 +22,7 @@ import {
   X,
   Trash2,
   ToggleLeft,
-  ToggleRight,
-  MessageSquare,
-  Plus
+  ToggleRight
 } from 'lucide-react';
 import { Button } from '../components/Button';
 import { 
@@ -38,10 +36,7 @@ import {
   fetchClientAddresses,
   createAddress,
   updateAddressStatus,
-  deleteAddress,
-  fetchClientNotes,
-  createClientNote,
-  Note
+  deleteAddress
 } from '../lib/airtable';
 
 function ClientViewPage() {
@@ -60,12 +55,6 @@ function ClientViewPage() {
   const [showAddAddress, setShowAddAddress] = useState(false);
   const [newAddress, setNewAddress] = useState({ address: '', title: '', notes: '', status: 'Active' as const });
   const [addressError, setAddressError] = useState<string | null>(null);
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [notesLoading, setNotesLoading] = useState(true);
-  const [newNote, setNewNote] = useState('');
-  const [showAddNote, setShowAddNote] = useState(false);
-  const [noteError, setNoteError] = useState<string | null>(null);
-  const [submittingNote, setSubmittingNote] = useState(false);
 
   // Function to validate address
   const validateAddress = (address: string): boolean => {
@@ -172,25 +161,6 @@ function ClientViewPage() {
     getAddresses();
   }, [id]);
 
-  // Fetch client notes
-  useEffect(() => {
-    const getNotes = async () => {
-      if (!id) return;
-      
-      try {
-        setNotesLoading(true);
-        const notesData = await fetchClientNotes(id);
-        setNotes(notesData);
-      } catch (err) {
-        console.error('Error fetching notes:', err);
-      } finally {
-        setNotesLoading(false);
-      }
-    };
-
-    getNotes();
-  }, [id]);
-
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id) return;
@@ -265,41 +235,6 @@ function ClientViewPage() {
     } catch (err) {
       console.error('Error deleting address:', err);
       alert('Failed to delete address. Please try again.');
-    }
-  };
-
-  const handleAddNote = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!id) return;
-    
-    const trimmedNote = newNote.trim();
-    if (!trimmedNote) {
-      setNoteError('Note content is required');
-      return;
-    }
-
-    try {
-      setSubmittingNote(true);
-      setNoteError(null);
-      
-      // Use the current user's name or email as the creator
-      // In a real app, this would come from the auth context
-      const createdBy = 'Current User';
-      
-      const result = await createClientNote(id, trimmedNote, createdBy);
-
-      if (result) {
-        setNotes(prev => [result, ...prev]);
-        setNewNote('');
-        setShowAddNote(false);
-      } else {
-        throw new Error('Failed to create note');
-      }
-    } catch (err) {
-      console.error('Error adding note:', err);
-      setNoteError(err instanceof Error ? err.message : 'Failed to save note. Please try again.');
-    } finally {
-      setSubmittingNote(false);
     }
   };
 
@@ -810,4 +745,191 @@ function ClientViewPage() {
                 <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
                   Notes
                 </label>
-                
+                <textarea
+                  id="notes"
+                  value={newAddress.notes}
+                  onChange={(e) => setNewAddress(prev => ({ ...prev, notes: e.target.value }))}
+                  rows={2}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+              </div>
+              <div className="flex justify-end">
+                <Button type="submit" size="sm">
+                  Add Address
+                </Button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        <div className="divide-y divide-gray-200">
+          {addressLoading ? (
+            <div className="px-6 py-4 text-center text-gray-500">
+              Loading addresses...
+            </div>
+          ) : addresses.length === 0 ? (
+            <div className="px-6 py-4 text-center text-gray-500">
+              No approved destinations yet.
+            </div>
+          ) : (
+            addresses.map((address) => (
+              <div key={address.id} className="px-6 py-4">
+                <div className="flex items-start space-x-4">
+                  {address.thumbnail && (
+                    <div className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden">
+                      <img 
+                        src={address.thumbnail} 
+                        alt={`Thumbnail for ${address.address}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <MapPin className="h-4 w-4 text-gray-400 mr-2" />
+                          <span className="text-gray-900">{address.address}</span>
+                          <span className={`ml-3 px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            address.status === 'Active' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {address.status}
+                          </span>
+                        </div>
+                        {address.notes && (
+                          <p className="mt-1 text-sm text-gray-500">{address.notes}</p>
+                        )}
+                      </div>
+                      <div className="ml-4 flex items-center space-x-2">
+                        <button
+                          onClick={() => handleToggleAddressStatus(address.id, address.status)}
+                          className={`p-1 rounded-full hover:bg-gray-100 ${
+                            address.status === 'Active' 
+                              ? 'text-green-600 hover:text-green-700' 
+                              : 'text-gray-400 hover:text-gray-500'
+                          }`}
+                          title={address.status === 'Active' ? 'Disable Address' : 'Enable Address'}
+                        >
+                          {address.status === 'Active' ? (
+                            <ToggleRight className="h-5 w-5" />
+                          ) : (
+                            <ToggleLeft className="h-5 w-5" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteAddress(address.id)}
+                          className="p-1 rounded-full text-red-600 hover:text-red-700 hover:bg-gray-100"
+                          title="Delete Address"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+      {/* Notes */}
+
+      {/* Recent Rides */}
+      <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-medium text-gray-900">Recent Rides</h3>
+        </div>
+        {rides.length === 0 ? (
+          <div className="p-6 text-center">
+            <Car className="h-12 w-12 mx-auto text-gray-400" />
+            <h3 className="mt-2 text-sm font-medium text-gray-900">No rides yet</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Get started by scheduling a ride for this client.
+            </p>
+            <div className="mt-6">
+              <Button
+                onClick={() => navigate('/rides/schedule', { 
+                  state: { 
+                    clientId: id,
+                    returnPath: `/clients/${id}`
+                  }
+                })}
+              >
+                Schedule First Ride
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Pickup
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Dropoff
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {rides.map((ride) => (
+                  <tr key={ride.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <Calendar className="h-4 w-4 text-gray-400 mr-1" />
+                        <span className="text-sm text-gray-900">
+                          {formatDate(ride.dropoffDateTime)}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">{ride.pickupAddress}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">{ride.dropoffAddress}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        ride.status === 'Completed'
+                          ? 'bg-green-100 text-green-800'
+                          : ride.status === 'Cancelled'
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-blue-100 text-blue-800'
+                      }`}>
+                        {ride.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button
+                        onClick={() => handleViewRide(ride.id)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export {ClientViewPage};
+
+export { ClientViewPage }
