@@ -888,7 +888,7 @@ export const fetchClientNotes = async (clientId: string): Promise<Note[]> => {
 
     return records.map(record => ({
       id: record.id,
-      content: record.get('Notes') as string,
+      content: record.get('Note') as string,
       createdBy: record.get('Created By') as string,
       createdAt: record.get('Created Date') as string,
       clientId: record.get('ClientID') as string
@@ -918,6 +918,8 @@ export const createClientNote = async (clientId: string, content: string, create
     }
 
     const clientAirtableId = clientRecords[0].get('Client ID') as string;
+
+    console.error('clientAirtableId: ', clientAirtableId);
 
     if (!clientAirtableId) {
       throw new Error('No Client ID found for client');
