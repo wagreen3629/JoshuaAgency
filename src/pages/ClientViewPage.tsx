@@ -36,7 +36,7 @@ import {
   fetchClientAddresses,
   createAddress,
   updateAddressStatus,
-  deleteAddress
+  deleteAddress,
   fetchClientNotes,
   createClientNote,
   Note
