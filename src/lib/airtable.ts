@@ -848,6 +848,7 @@ export const deleteClient = async (id: string): Promise<boolean> => {
 // Ride interface
 export interface Ride {
   id: string;
+  OrgID: string;
   clientId: string;
   clientName: string;
   clientEmail: string;
