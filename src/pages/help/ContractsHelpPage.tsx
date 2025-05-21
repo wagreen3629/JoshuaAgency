@@ -35,7 +35,7 @@ export function ContractsHelpPage() {
             <div className="flex items-start">
               <FileText className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Creating Contracts</h3>
+                <h3 className="font-bold text-gray-900">Creating Contracts</h3>
                 <p className="mt-1 text-gray-600">Steps to create a new contract:</p>
                 <ol className="mt-2 list-decimal list-inside text-gray-600 ml-4">
                   <li>Click "Add Contract" button</li>
@@ -50,7 +50,7 @@ export function ContractsHelpPage() {
             <div className="flex items-start">
               <DollarSign className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Fee Structure</h3>
+                <h3 className="font-bold text-gray-900">Fee Structure</h3>
                 <p className="mt-1 text-gray-600">Configure various fee types:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Mileage rates</li>
@@ -65,7 +65,7 @@ export function ContractsHelpPage() {
             <div className="flex items-start">
               <Settings className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Contract Settings</h3>
+                <h3 className="font-bold text-gray-900">Contract Settings</h3>
                 <p className="mt-1 text-gray-600">Important contract settings include:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Service area boundaries</li>
@@ -85,7 +85,7 @@ export function ContractsHelpPage() {
             <div className="flex items-start">
               <Users className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Client Assignment</h3>
+                <h3 className="font-bold text-gray-900">Client Assignment</h3>
                 <p className="mt-1 text-gray-600">Managing client relationships:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Assign clients to contracts</li>
@@ -99,7 +99,7 @@ export function ContractsHelpPage() {
             <div className="flex items-start">
               <FileText className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Documentation</h3>
+                <h3 className="font-bold text-gray-900">Documentation</h3>
                 <p className="mt-1 text-gray-600">Required contract documentation:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Signed agreements</li>

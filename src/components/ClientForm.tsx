@@ -365,7 +365,7 @@ function ClientForm({ client, onSuccess, onCancel }: ClientFormProps) {
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Case Information Section */}
         <div>
-          <h3 className="text-md font-medium text-gray-900 mb-4 pb-2 border-b">Case Information</h3>
+          <h3 className="text-md font-bold text-gray-900 mb-4 pb-2 border-b">Case Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="county" className="block text-sm font-medium text-gray-700 mb-1">
@@ -436,7 +436,7 @@ function ClientForm({ client, onSuccess, onCancel }: ClientFormProps) {
         
         {/* Client Information Section */}
         <div>
-          <h3 className="text-md font-medium text-gray-900 mb-4 pb-2 border-b">Client Information</h3>
+          <h3 className="text-md font-bold text-gray-900 mb-4 pb-2 border-b">Client Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -597,7 +597,7 @@ function ClientForm({ client, onSuccess, onCancel }: ClientFormProps) {
         
         {/* Activity Information Section */}
         <div>
-          <h3 className="text-md font-medium text-gray-900 mb-4 pb-2 border-b">Activity Information</h3>
+          <h3 className="text-md font-bold text-gray-900 mb-4 pb-2 border-b">Activity Information</h3>
           
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-3">

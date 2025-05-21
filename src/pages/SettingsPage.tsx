@@ -78,7 +78,7 @@ export function SettingsPage() {
             
             <div className="space-y-6">
               <div>
-                <h3 className="text-md font-medium text-gray-900">Change Password</h3>
+                <h3 className="text-md font-bold text-gray-900">Change Password</h3>
                 <div className="mt-2 max-w-xl space-y-4">
                   <div>
                     <label htmlFor="current_password" className="block text-sm font-medium text-gray-700">
@@ -125,7 +125,7 @@ export function SettingsPage() {
               </div>
               
               <div className="pt-6 border-t border-gray-200">
-                <h3 className="text-md font-medium text-gray-900">Two-Factor Authentication</h3>
+                <h3 className="text-md font-bold text-gray-900">Two-Factor Authentication</h3>
                 <div className="mt-2 max-w-xl">
                   <p className="text-sm text-gray-500">
                     Add an extra layer of security to your account by enabling two-factor authentication.

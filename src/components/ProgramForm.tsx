@@ -111,7 +111,7 @@ export function ProgramForm({ program, onSuccess, onCancel }: ProgramFormProps) 
 
         {/* Basic Information Section */}
         <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Basic Information</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Basic Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -162,7 +162,7 @@ export function ProgramForm({ program, onSuccess, onCancel }: ProgramFormProps) 
 
         {/* Location Section */}
         <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Location</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Location</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
@@ -217,7 +217,7 @@ export function ProgramForm({ program, onSuccess, onCancel }: ProgramFormProps) 
 
         {/* Fee Structure Section */}
         <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Fee Structure</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Fee Structure</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label htmlFor="mileageFee" className="block text-sm font-medium text-gray-700 mb-1">
@@ -328,7 +328,7 @@ export function ProgramForm({ program, onSuccess, onCancel }: ProgramFormProps) 
 
         {/* Additional Information Section */}
         <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Additional Information</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Additional Information</h3>
           <div className="space-y-6">
             <div>
               <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">

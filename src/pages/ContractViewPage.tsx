@@ -135,7 +135,7 @@ export function ContractViewPage() {
 
         {/* Location Information */}
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Location</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Location</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <div className="text-sm font-medium text-gray-500">Entity</div>
@@ -158,7 +158,7 @@ export function ContractViewPage() {
 
         {/* Fee Structure */}
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Fee Structure</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Fee Structure</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <div className="text-sm font-medium text-gray-500">Mileage Fee</div>
@@ -200,7 +200,7 @@ export function ContractViewPage() {
 
         {/* Additional Information */}
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Additional Information</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Additional Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <div className="text-sm font-medium text-gray-500">Contract Expiration</div>

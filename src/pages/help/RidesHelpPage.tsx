@@ -46,7 +46,7 @@ export function RidesHelpPage() {
             <div className="flex items-start">
               <Car className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Types of Rides</h3>
+                <h3 className="font-bold text-gray-900">Types of Rides</h3>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Immediate - For rides needed right away</li>
                   <li>Scheduled - For future appointments</li>
@@ -59,7 +59,7 @@ export function RidesHelpPage() {
             <div className="flex items-start">
               <Calendar className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Scheduling Process</h3>
+                <h3 className="font-bold text-gray-900">Scheduling Process</h3>
                 <ol className="mt-2 list-decimal list-inside text-gray-600 ml-4">
                   <li>Select the client</li>
                   <li>Choose pickup and drop-off locations</li>
@@ -73,7 +73,7 @@ export function RidesHelpPage() {
             <div className="flex items-start">
               <MapPin className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Managing Locations</h3>
+                <h3 className="font-bold text-gray-900">Managing Locations</h3>
                 <p className="mt-1 text-gray-600">When entering locations:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Use complete addresses</li>
@@ -103,7 +103,7 @@ export function RidesHelpPage() {
             <div className="flex items-start">
               <Clock className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Ride Status Updates</h3>
+                <h3 className="font-bold text-gray-900">Ride Status Updates</h3>
                 <p className="mt-1 text-gray-600">Monitor rides through various statuses:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Processing - Initial scheduling</li>
@@ -118,7 +118,7 @@ export function RidesHelpPage() {
             <div className="flex items-start">
               <AlertTriangle className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Handling Issues</h3>
+                <h3 className="font-bold text-gray-900">Handling Issues</h3>
                 <p className="mt-1 text-gray-600">Common issues and solutions:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>No driver available - Try adjusting pickup time</li>

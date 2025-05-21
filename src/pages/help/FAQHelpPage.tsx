@@ -77,7 +77,7 @@ export function FAQHelpPage() {
             <div className="flex items-start">
               <HelpCircle className="h-6 w-6 text-blue-600 mt-1 mr-3 flex-shrink-0" />
               <div>
-                <h3 className="font-medium text-gray-900">{faq.question}</h3>
+                <h3 className="font-bold text-gray-900">{faq.question}</h3>
                 <p className="mt-2 text-gray-600">{faq.answer}</p>
               </div>
             </div>
@@ -85,7 +85,7 @@ export function FAQHelpPage() {
         ))}
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
-          <h2 className="text-lg font-medium text-blue-900 mb-2">Still Need Help?</h2>
+          <h2 className="text-lg font-bold text-blue-900 mb-2">Still Need Help?</h2>
           <p className="text-blue-700">
             If you can't find the answer to your question, our support team is here to help.
             Contact us through the support portal or email us at support@example.com.

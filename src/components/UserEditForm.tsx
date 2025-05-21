@@ -278,7 +278,7 @@ export function UserEditForm({ user, onSuccess, onCancel }: UserEditFormProps) {
 
         {/* Password Section */}
         <div className="border-t pt-6">
-          <h3 className="text-md font-medium text-gray-900 mb-4">
+          <h3 className="text-md font-bold text-gray-900 mb-4">
             {user ? 'Change Password' : 'Set Password'}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

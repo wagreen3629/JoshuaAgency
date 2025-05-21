@@ -145,7 +145,7 @@ export function HelpPage() {
         
         <div className="space-y-8">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Home Dashboard</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Home Dashboard</h3>
             <p className="text-gray-600 mb-4">
               The dashboard provides a comprehensive overview of your transportation operations:
             </p>
@@ -158,7 +158,7 @@ export function HelpPage() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Clients Management</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Clients Management</h3>
             <p className="text-gray-600 mb-4">
               Comprehensive client management system for handling transportation service recipients:
             </p>
@@ -172,7 +172,7 @@ export function HelpPage() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Ride Management</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Ride Management</h3>
             <p className="text-gray-600 mb-4">
               Complete transportation scheduling and management system:
             </p>
@@ -187,7 +187,7 @@ export function HelpPage() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Digital Signatures</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Digital Signatures</h3>
             <p className="text-gray-600 mb-4">
               Electronic signature management for ride verification:
             </p>
@@ -201,7 +201,7 @@ export function HelpPage() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Invoicing System</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Invoicing System</h3>
             <p className="text-gray-600 mb-4">
               Comprehensive billing and invoice management:
             </p>
@@ -215,7 +215,7 @@ export function HelpPage() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Contract Management</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Contract Management</h3>
             <p className="text-gray-600 mb-4">
               Handle service agreements and contract administration:
             </p>
@@ -229,7 +229,7 @@ export function HelpPage() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Reporting & Analytics</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">Reporting & Analytics</h3>
             <p className="text-gray-600 mb-4">
               Comprehensive reporting tools for business insights:
             </p>
@@ -243,7 +243,7 @@ export function HelpPage() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">User Management</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">User Management</h3>
             <p className="text-gray-600 mb-4">
               Secure user access control and administration:
             </p>
@@ -257,7 +257,7 @@ export function HelpPage() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">System Settings</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">System Settings</h3>
             <p className="text-gray-600 mb-4">
               Configure and customize system preferences:
             </p>

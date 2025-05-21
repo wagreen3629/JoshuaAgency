@@ -35,7 +35,7 @@ export function InvoicesHelpPage() {
             <div className="flex items-start">
               <FileText className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Invoice Generation</h3>
+                <h3 className="font-bold text-gray-900">Invoice Generation</h3>
                 <p className="mt-1 text-gray-600">Steps to generate invoices:</p>
                 <ol className="mt-2 list-decimal list-inside text-gray-600 ml-4">
                   <li>Select date range for billing</li>
@@ -50,7 +50,7 @@ export function InvoicesHelpPage() {
             <div className="flex items-start">
               <DollarSign className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Billing Components</h3>
+                <h3 className="font-bold text-gray-900">Billing Components</h3>
                 <p className="mt-1 text-gray-600">Understanding invoice components:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Base trip charges</li>
@@ -65,7 +65,7 @@ export function InvoicesHelpPage() {
             <div className="flex items-start">
               <Calendar className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Billing Cycles</h3>
+                <h3 className="font-bold text-gray-900">Billing Cycles</h3>
                 <p className="mt-1 text-gray-600">Common billing periods:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Monthly billing</li>
@@ -84,7 +84,7 @@ export function InvoicesHelpPage() {
             <div className="flex items-start">
               <Download className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Export Options</h3>
+                <h3 className="font-bold text-gray-900">Export Options</h3>
                 <p className="mt-1 text-gray-600">Available export formats:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>PDF documents</li>
@@ -98,7 +98,7 @@ export function InvoicesHelpPage() {
             <div className="flex items-start">
               <AlertCircle className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Common Issues</h3>
+                <h3 className="font-bold text-gray-900">Common Issues</h3>
                 <p className="mt-1 text-gray-600">Troubleshooting invoice problems:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Missing ride data</li>

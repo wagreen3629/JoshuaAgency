@@ -149,7 +149,7 @@ function ContractEditPage() {
         <form onSubmit={handleSubmit} className="p-6 space-y-8">
           {/* Basic Information */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Basic Information</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Basic Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -202,7 +202,7 @@ function ContractEditPage() {
 
           {/* Location Information */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Location</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Location</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
@@ -257,7 +257,7 @@ function ContractEditPage() {
 
           {/* Fee Structure */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Fee Structure</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Fee Structure</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label htmlFor="mileageFee" className="block text-sm font-medium text-gray-700 mb-1">
@@ -373,7 +373,7 @@ function ContractEditPage() {
 
           {/* Additional Information */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Additional Information</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Additional Information</h3>
             <div className="grid grid-cols-1 gap-6">
               <div>
                 <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
@@ -393,7 +393,7 @@ function ContractEditPage() {
 
           {/* Status */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Status</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Status</h3>
             <div>
               <div>
                 <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">

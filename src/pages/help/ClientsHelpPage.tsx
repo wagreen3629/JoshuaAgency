@@ -46,7 +46,7 @@ export function ClientsHelpPage() {
             <div className="flex items-start">
               <Users className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Adding New Clients</h3>
+                <h3 className="font-bold text-gray-900">Adding New Clients</h3>
                 <p className="mt-1 text-gray-600">Click the "Add Client" button to create a new client profile. Fill in all required information including:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Personal information (name, contact details)</li>
@@ -60,7 +60,7 @@ export function ClientsHelpPage() {
             <div className="flex items-start">
               <Upload className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Uploading Referrals</h3>
+                <h3 className="font-bold text-gray-900">Uploading Referrals</h3>
                 <p className="mt-1 text-gray-600">To upload a client referral:</p>
                 <ol className="mt-2 list-decimal list-inside text-gray-600 ml-4">
                   <li>Click "Upload Referral" button</li>
@@ -74,7 +74,7 @@ export function ClientsHelpPage() {
             <div className="flex items-start">
               <FileText className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Client Details</h3>
+                <h3 className="font-bold text-gray-900">Client Details</h3>
                 <p className="mt-1 text-gray-600">View detailed client information by clicking on a client's name. From the details page, you can:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Edit client information</li>
@@ -89,7 +89,7 @@ export function ClientsHelpPage() {
             <div className="flex items-start">
               <Search className="h-6 w-6 text-blue-600 mt-1 mr-3" />
               <div>
-                <h3 className="font-medium text-gray-900">Searching and Filtering</h3>
+                <h3 className="font-bold text-gray-900">Searching and Filtering</h3>
                 <p className="mt-1 text-gray-600">Use the search bar to find clients by:</p>
                 <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
                   <li>Name</li>
