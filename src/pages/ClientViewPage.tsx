@@ -55,6 +55,12 @@ function ClientViewPage() {
   const [showAddAddress, setShowAddAddress] = useState(false);
   const [newAddress, setNewAddress] = useState({ address: '', title: '', notes: '', status: 'Active' as const });
   const [addressError, setAddressError] = useState<string | null>(null);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [notesLoading, setNotesLoading] = useState(true);
+  const [showAddNote, setShowAddNote] = useState(false);
+  const [newNote, setNewNote] = useState('');
+  const [noteError, setNoteError] = useState<string | null>(null);
+  const [noteSubmitting, setNoteSubmitting] = useState(false);
 
   // Function to validate address
   const validateAddress = (address: string): boolean => {
@@ -161,6 +167,25 @@ function ClientViewPage() {
     getAddresses();
   }, [id]);
 
+  // Fetch client notes
+  useEffect(() => {
+    const getNotes = async () => {
+      if (!id) return;
+      
+      try {
+        setNotesLoading(true);
+        const notesData = await fetchClientNotes(id);
+        setNotes(notesData);
+      } catch (err) {
+        console.error('Error fetching notes:', err);
+      } finally {
+        setNotesLoading(false);
+      }
+    };
+
+    getNotes();
+  }, [id]);
+
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id) return;
@@ -200,6 +225,40 @@ function ClientViewPage() {
     } catch (err) {
       console.error('Error adding address:', err);
       setAddressError(err instanceof Error ? err.message : 'Failed to save address. Please try again.');
+    }
+  };
+
+  const handleAddNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id) return;
+    
+    const trimmedNote = newNote.trim();
+    if (!trimmedNote) {
+      setNoteError('Note content is required');
+      return;
+    }
+
+    try {
+      setNoteSubmitting(true);
+      setNoteError(null);
+      
+      // Use the current user's name or email as the creator
+      const creatorName = client?.clientName || 'System User';
+      
+      const result = await createClientNote(id, trimmedNote, creatorName);
+      
+      if (!result) {
+        throw new Error('Failed to save note');
+      }
+
+      setNotes(prev => [result, ...prev]);
+      setNewNote('');
+      setShowAddNote(false);
+    } catch (err) {
+      console.error('Error adding note:', err);
+      setNoteError(err instanceof Error ? err.message : 'Failed to save note. Please try again.');
+    } finally {
+      setNoteSubmitting(false);
     }
   };
 
@@ -829,6 +888,92 @@ function ClientViewPage() {
         </div>
       </div>
       {/* Notes */}
+      <div className="bg-white shadow rounded-lg overflow-hidden mb-6">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium text-gray-900">Notes</h3>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAddNote(!showAddNote)}
+              className="flex items-center"
+            >
+              {showAddNote ? 'Cancel' : 'Add Note'}
+            </Button>
+          </div>
+        </div>
+
+        {showAddNote && (
+          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <form onSubmit={handleAddNote} className="space-y-4">
+              {noteError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+                  <div className="flex items-center">
+                    <AlertCircle className="h-4 w-4 mr-2" />
+                    {noteError}
+                  </div>
+                </div>
+              )}
+              <div>
+                <label htmlFor="noteContent" className="block text-sm font-medium text-gray-700">
+                  Note Content <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="noteContent"
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  rows={3}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  required
+                  placeholder="Enter note details here..."
+                />
+              </div>
+              <div className="flex justify-end">
+                <Button 
+                  type="submit" 
+                  size="sm"
+                  disabled={noteSubmitting}
+                >
+                  {noteSubmitting ? 'Saving...' : 'Add Note'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        <div className="divide-y divide-gray-200">
+          {notesLoading ? (
+            <div className="px-6 py-4 text-center text-gray-500">
+              Loading notes...
+            </div>
+          ) : notes.length === 0 ? (
+            <div className="px-6 py-4 text-center text-gray-500">
+              No notes available for this client.
+            </div>
+          ) : (
+            notes.map((note) => (
+              <div key={note.id} className="px-6 py-4">
+                <div className="flex flex-col space-y-2">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center">
+                      <User className="h-4 w-4 text-gray-400 mr-2" />
+                      <span className="font-medium text-gray-900">{note.createdBy}</span>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      <Calendar className="h-4 w-4 inline mr-1" />
+                      {formatDate(note.createdAt)}
+                    </div>
+                  </div>
+                  <div className="text-gray-700 whitespace-pre-line">
+                    {note.content}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
 
       {/* Recent Rides */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
