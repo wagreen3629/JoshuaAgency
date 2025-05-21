@@ -605,7 +605,18 @@ export function RidesPage() {
               <div className="px-6 py-3 bg-gray-50 text-right">
                 <div className="flex justify-between items-center">
                   <div className="text-sm text-gray-500">
-                    Trip ID: {ride.tripID || 'N/A'}
+                    Trip ID:{' '}
+                    {ride.tripID ? (
+                      <a
+                        href={`https://health.uber.com/v2/organization/${ride.OrgID}/trip/${ride.tripID}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {ride.tripID}
+                      </a>
+                    ) : (
+                      'N/A'
+                    )}
                   </div>
                   <div>
                     <button 
