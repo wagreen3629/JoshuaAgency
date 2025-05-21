@@ -377,7 +377,20 @@ export function RideViewPage() {
                 <div className="text-sm font-medium text-gray-500">Trip ID</div>
                 <div className="mt-1 flex items-start">
                   <Car className="h-4 w-4 text-gray-400 mr-1" />
-                  <span className="text-gray-900">{ride.tripID || 'N/A'}</span>
+                  <span className="text-gray-900">
+                      {ride.tripID ? (
+                      <a
+                        href={`https://health.uber.com/v2/organization/${ride.OrgID}/trip/${ride.tripID}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                      >
+                        {ride.tripID}
+                      </a>
+                    ) : (
+                      'N/A'
+                    )}                    
+                  </span>
                 </div>
               </div>
             </div>
