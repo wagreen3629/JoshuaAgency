@@ -611,6 +611,7 @@ export function RidesPage() {
                         href={`https://health.uber.com/v2/organization/${ride.OrgID}/trip/${ride.tripID}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 hover:underline"
                       >
                         {ride.tripID}
                       </a>
