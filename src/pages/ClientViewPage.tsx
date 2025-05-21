@@ -931,5 +931,3 @@ function ClientViewPage() {
 }
 
 export {ClientViewPage};
-
-export { ClientViewPage }
