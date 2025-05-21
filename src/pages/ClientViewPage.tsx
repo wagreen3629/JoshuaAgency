@@ -532,7 +532,7 @@ function ClientViewPage() {
         {/* Case Information Section */}
         <div className="px-6 py-4">
           <div className="flex justify-between items-center mb-4 pb-2 border-b">
-            <h3 className="text-lg font-medium text-gray-900">Case Information</h3>
+            <h3 className="text-lg font-bold text-gray-900">Case Information</h3>
             {client.referralFile && client.referralFile.length > 0 && (
               <a
                 href={client.referralFile[0].url}
@@ -595,7 +595,7 @@ function ClientViewPage() {
 
         {/* Client Information Section */}
         <div className="px-6 py-4 border-t border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Client Information</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Client Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <div className="text-sm font-medium text-gray-500">Client Name</div>
@@ -677,7 +677,7 @@ function ClientViewPage() {
         
         {/* Program Information Section */}
         <div className="px-6 py-4 border-t border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4 pb-2 border-b">Program Information</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b">Program Information</h3>
           <div className="grid grid-cols-1 gap-6">
             <div>
               <div className="text-sm font-medium text-gray-500">Programs</div>
@@ -782,7 +782,7 @@ function ClientViewPage() {
       <div className="bg-white shadow rounded-lg overflow-hidden mb-6">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium text-gray-900">Approved Destinations</h3>
+            <h3 className="text-lg font-bold text-gray-900">Approved Destinations</h3>
             <Button
               variant="outline"
               size="sm"
@@ -938,7 +938,7 @@ function ClientViewPage() {
       <div className="bg-white shadow rounded-lg overflow-hidden mb-6">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium text-gray-900">Notes</h3>
+            <h3 className="text-lg font-bold text-gray-900">Notes</h3>
             <Button
               variant="outline"
               size="sm"
@@ -1032,7 +1032,7 @@ function ClientViewPage() {
       {/* Recent Rides */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Most Recent Rides (10)</h3>
+          <h3 className="text-lg font-bold text-gray-900">Most Recent Rides (10)</h3>
         </div>
         {rides.length === 0 ? (
           <div className="p-6 text-center">
