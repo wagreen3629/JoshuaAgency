@@ -323,7 +323,7 @@ export function RideViewPage() {
 
         {/* Client and Driver Information */}
         <div className="px-6 py-4 border-b border-gray-200">
-          <h4 className="text-sm font-bold text-gray-500 mb-4">People</h4>
+          <h4 className="text-sm font-medium text-gray-500 mb-4">People</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <div className="text-sm font-medium text-gray-500">Client</div>
@@ -365,7 +365,7 @@ export function RideViewPage() {
 
         {/* Ride Details */}
         <div className="px-6 py-4 border-b border-gray-200">
-          <h4 className="text-sm font-bold text-gray-500 mb-4">Ride Details</h4>
+          <h4 className="text-sm font-medium text-gray-500 mb-4">Ride Details</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <div className="text-sm font-medium text-gray-500">Pickup Location</div>
@@ -468,7 +468,7 @@ export function RideViewPage() {
 
         {/* Distance Information */}
         <div className="px-6 py-4 border-b border-gray-200">
-          <h4 className="text-sm font-bold text-gray-500 mb-4">Distance Information</h4>
+          <h4 className="text-sm font-medium text-gray-500 mb-4">Distance Information</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <div className="text-sm font-medium text-gray-500">Uber Distance</div>
@@ -503,7 +503,7 @@ export function RideViewPage() {
 
         {/* Service Information */}
         <div className="px-6 py-4 border-b border-gray-200">
-          <h4 className="text-sm font-bold text-gray-500 mb-4">Service Information</h4>
+          <h4 className="text-sm font-medium text-gray-500 mb-4">Service Information</h4>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div>
               <div className="text-sm font-medium text-gray-500">Service Type</div>
@@ -538,7 +538,7 @@ export function RideViewPage() {
 
         {/* Payment Information */}
         <div className="px-6 py-4">
-          <h4 className="text-sm font-bold text-gray-500 mb-4">Payment Information</h4>
+          <h4 className="text-sm font-medium text-gray-500 mb-4">Payment Information</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div>
               <div className="text-sm font-medium text-gray-500">Payment Method</div>
