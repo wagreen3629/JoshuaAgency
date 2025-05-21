@@ -741,6 +741,14 @@ function ClientViewPage() {
             
             
             <div>
+              <div className="text-sm font-medium text-gray-500">Notes</div>
+              <div className="mt-1 flex items-center">
+                <Calendar className="h-4 w-4 text-gray-400 mr-1" />
+                <span className="text-gray-900">{client.Notes}</span>
+              </div>
+            </div>
+            
+            <div>
               <div className="text-sm font-medium text-gray-500">Created Date</div>
               <div className="mt-1 flex items-center">
                 <Calendar className="h-4 w-4 text-gray-400 mr-1" />
