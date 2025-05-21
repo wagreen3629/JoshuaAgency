@@ -883,14 +883,14 @@ export const fetchClientNotes = async (clientId: string): Promise<Note[]> => {
     // Then fetch notes using the Client ID
     const records = await base('Notes').select({
       filterByFormula: `{Client} = '${clientAirtableId}'`,
-      sort: [{ field: 'Created', direction: 'desc' }]
+      sort: [{ field: 'Created Date', direction: 'desc' }]
     }).all();
 
     return records.map(record => ({
       id: record.id,
       content: record.get('Note') as string,
       createdBy: record.get('Created By') as string,
-      createdAt: record.get('Created') as string,
+      createdAt: record.get('Created Date') as string,
       clientId: record.get('Client') as string
     }));
   } catch (error) {
@@ -949,7 +949,7 @@ export const createClientNote = async (clientId: string, content: string, create
       id: record.id,
       content: record.get('Note') as string,
       createdBy: record.get('Created By') as string,
-      createdAt: record.get('Created') as string,
+      createdAt: record.get('Created Date') as string,
       clientId: record.get('Client') as string
     };
   } catch (error) {
