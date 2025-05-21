@@ -638,14 +638,8 @@ function ClientViewPage() {
                 <Tag className="h-4 w-4 text-gray-400 mr-1" />
                 <span className="text-gray-900">{client.contractName ? client.contractName : 'No contract assigned'}</span>
               </div>
-            </div>
+            </div>         
             
-            <div>
-              <div className="text-sm font-medium text-gray-500">Notes</div>
-              <div className="mt-1 text-gray-900">
-                {client.notes || 'No notes available.'}
-              </div>
-            </div>
             
             <div>
               <div className="text-sm font-medium text-gray-500">Created Date</div>
