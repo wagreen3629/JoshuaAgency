@@ -965,6 +965,21 @@ export const createClientNote = async (clientId: string, content: string, create
   }
 };
 
+// Delete a note
+export const deleteClientNote = async (noteId: string): Promise<boolean> => {
+  try {
+    if (!base) {
+      throw new Error('Airtable base not initialized');
+    }
+    
+    await base('Notes').destroy(noteId);
+    return true;
+  } catch (error) {
+    console.error('Error deleting note:', error);
+    return false;
+  }
+};
+
 // Ride interface
 export interface Ride {
   id: string;

@@ -39,6 +39,7 @@ import {
   deleteAddress,
   fetchClientNotes,
   createClientNote,
+  deleteClientNote,
   Note
 } from '../lib/airtable';
 
@@ -297,6 +298,24 @@ function ClientViewPage() {
     } catch (err) {
       console.error('Error deleting address:', err);
       alert('Failed to delete address. Please try again.');
+    }
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    if (!window.confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const success = await deleteClientNote(noteId);
+      if (success) {
+        setNotes(prev => prev.filter(note => note.id !== noteId));
+      } else {
+        throw new Error('Failed to delete note');
+      }
+    } catch (err) {
+      console.error('Error deleting note:', err);
+      alert('Failed to delete note. Please try again.');
     }
   };
 
@@ -966,6 +985,13 @@ function ClientViewPage() {
                       <Calendar className="h-4 w-4 inline mr-1" />
                       {formatDate(note.createdAt)}
                     </div>
+                    <button
+                      onClick={() => handleDeleteNote(note.id)}
+                      className="ml-2 p-1 rounded-full text-red-600 hover:text-red-700 hover:bg-gray-100"
+                      title="Delete Note"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                   <div className="text-gray-700 whitespace-pre-line">
                     {note.content}
