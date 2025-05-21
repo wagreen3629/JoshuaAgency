@@ -919,7 +919,7 @@ export const createClientNote = async (clientId: string, content: string, create
 
     const clientAirtableId = clientRecords[0].get('Client ID') as string;
 
-    console.error('clientAirtableId: ', clientAirtableId);
+    console.log('clientAirtableId: ', clientAirtableId);
 
     if (!clientAirtableId) {
       throw new Error('No Client ID found for client');
@@ -941,6 +941,10 @@ export const createClientNote = async (clientId: string, content: string, create
       userFullName = profile?.full_name || profile?.email || createdBy;
     }
 
+    console.log('content: ', content);
+    console.log('userFullName: ', userFullName);
+    console.log('clientAirtableId: ', clientAirtableId);
+    
     const record = await base('Notes').create({
       'Note': content,
       'Created By': userFullName,
