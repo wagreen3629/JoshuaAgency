@@ -1032,7 +1032,7 @@ function ClientViewPage() {
       {/* Recent Rides */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Recent Rides</h3>
+          <h3 className="text-lg font-medium text-gray-900">Last 10 Rides</h3>
         </div>
         {rides.length === 0 ? (
           <div className="p-6 text-center">
