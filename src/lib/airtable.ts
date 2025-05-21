@@ -1,4 +1,5 @@
 import Airtable from 'airtable';
+import { supabase } from './supabase';
 
 // Initialize Airtable with API key
 const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
@@ -922,9 +923,25 @@ export const createClientNote = async (clientId: string, content: string, create
       throw new Error('No Client ID found for client');
     }
 
+    // Get current user from Supabase auth
+    const { data: { session } } = await supabase.auth.getSession();
+    let userFullName = createdBy; // Default to passed name if auth fails
+    
+    if (session?.user) {
+      // Try to get user's profile from Supabase
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, email')
+        .eq('id', session.user.id)
+        .single();
+      
+      // Use full name if available, otherwise email, otherwise default
+      userFullName = profile?.full_name || profile?.email || createdBy;
+    }
+
     const record = await base('Notes').create({
       'Note': content,
-      'Created By': createdBy,
+      'Created By': userFullName,
       'Client': [clientAirtableId]
     });
 

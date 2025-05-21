@@ -37,6 +37,9 @@ import {
   createAddress,
   updateAddressStatus,
   deleteAddress
+  fetchClientNotes,
+  createClientNote,
+  Note
 } from '../lib/airtable';
 
 function ClientViewPage() {
