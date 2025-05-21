@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ArrowLeft, 
+  AlertTriangle,
   ChevronLeft,
   ChevronRight,
   User, 
@@ -42,6 +43,7 @@ import {
   deleteClientNote,
   Note
 } from '../lib/airtable';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
 
 function ClientViewPage() {
   const { id } = useParams<{ id: string }>();
@@ -65,6 +67,10 @@ function ClientViewPage() {
   const [newNote, setNewNote] = useState('');
   const [noteError, setNoteError] = useState<string | null>(null);
   const [noteSubmitting, setNoteSubmitting] = useState(false);
+  const [showDeleteAddressDialog, setShowDeleteAddressDialog] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
+  const [showDeleteNoteDialog, setShowDeleteNoteDialog] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
   // Function to validate address
   const validateAddress = (address: string): boolean => {
@@ -284,38 +290,50 @@ function ClientViewPage() {
   };
 
   const handleDeleteAddress = async (addressId: string) => {
-    if (!window.confirm('Are you sure you want to delete this address? This action cannot be undone.')) {
-      return;
-    }
+    setAddressToDelete(addressId);
+    setShowDeleteAddressDialog(true);
+  };
 
+  const confirmDeleteAddress = async () => {
     try {
-      const success = await deleteAddress(addressId);
+      if (!addressToDelete) return;
+      
+      const success = await deleteAddress(addressToDelete);
       if (success) {
-        setAddresses(prev => prev.filter(addr => addr.id !== addressId));
+        setAddresses(prev => prev.filter(addr => addr.id !== addressToDelete));
       } else {
         throw new Error('Failed to delete address');
       }
     } catch (err) {
       console.error('Error deleting address:', err);
       alert('Failed to delete address. Please try again.');
+    } finally {
+      setShowDeleteAddressDialog(false);
+      setAddressToDelete(null);
     }
   };
 
   const handleDeleteNote = async (noteId: string) => {
-    if (!window.confirm('Are you sure you want to delete this note? This action cannot be undone.')) {
-      return;
-    }
+    setNoteToDelete(noteId);
+    setShowDeleteNoteDialog(true);
+  };
 
+  const confirmDeleteNote = async () => {
     try {
-      const success = await deleteClientNote(noteId);
+      if (!noteToDelete) return;
+      
+      const success = await deleteClientNote(noteToDelete);
       if (success) {
-        setNotes(prev => prev.filter(note => note.id !== noteId));
+        setNotes(prev => prev.filter(note => note.id !== noteToDelete));
       } else {
         throw new Error('Failed to delete note');
       }
     } catch (err) {
       console.error('Error deleting note:', err);
       alert('Failed to delete note. Please try again.');
+    } finally {
+      setShowDeleteNoteDialog(false);
+      setNoteToDelete(null);
     }
   };
 
@@ -1094,6 +1112,58 @@ function ClientViewPage() {
           </div>
         )}
       </div>
+      
+      {/* Delete Address Confirmation Dialog */}
+      <Dialog open={showDeleteAddressDialog} onOpenChange={setShowDeleteAddressDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Address</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this address? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteAddressDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmDeleteAddress}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Delete Address
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Delete Note Confirmation Dialog */}
+      <Dialog open={showDeleteNoteDialog} onOpenChange={setShowDeleteNoteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Note</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this note? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteNoteDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmDeleteNote}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Delete Note
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
