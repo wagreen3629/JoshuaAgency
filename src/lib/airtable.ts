@@ -845,6 +845,102 @@ export const deleteClient = async (id: string): Promise<boolean> => {
   }
 };
 
+// Note interface
+export interface Note {
+  id: string;
+  content: string;
+  createdBy: string;
+  createdAt: string;
+  clientId: string;
+}
+
+// Fetch client notes from Airtable
+export const fetchClientNotes = async (clientId: string): Promise<Note[]> => {
+  try {
+    if (!base) {
+      throw new Error('Airtable base not initialized');
+    }
+
+    // First get the Client ID from the Clients table
+    const clientRecords = await base(tableName).select({
+      maxRecords: 1,
+      view: "Grid view",
+      filterByFormula: `RECORD_ID() = '${clientId}'`
+    }).all();
+
+    if (!clientRecords.length) {
+      throw new Error('Client not found');
+    }
+
+    const clientAirtableId = clientRecords[0].get('Client ID') as string;
+
+    if (!clientAirtableId) {
+      console.warn('No Client ID found for client');
+      return [];
+    }
+
+    // Then fetch notes using the Client ID
+    const records = await base('Notes').select({
+      filterByFormula: `{Client} = '${clientAirtableId}'`,
+      sort: [{ field: 'Created', direction: 'desc' }]
+    }).all();
+
+    return records.map(record => ({
+      id: record.id,
+      content: record.get('Note') as string,
+      createdBy: record.get('Created By') as string,
+      createdAt: record.get('Created') as string,
+      clientId: record.get('Client') as string
+    }));
+  } catch (error) {
+    console.error('Error fetching client notes:', error);
+    return [];
+  }
+};
+
+// Create a new note
+export const createClientNote = async (clientId: string, content: string, createdBy: string): Promise<Note | null> => {
+  try {
+    if (!base) {
+      throw new Error('Airtable base not initialized');
+    }
+
+    // First get the Client ID from the Clients table
+    const clientRecords = await base(tableName).select({
+      maxRecords: 1,
+      view: "Grid view",
+      filterByFormula: `RECORD_ID() = '${clientId}'`
+    }).all();
+
+    if (!clientRecords.length) {
+      throw new Error('Client not found');
+    }
+
+    const clientAirtableId = clientRecords[0].get('Client ID') as string;
+
+    if (!clientAirtableId) {
+      throw new Error('No Client ID found for client');
+    }
+
+    const record = await base('Notes').create({
+      'Note': content,
+      'Created By': createdBy,
+      'Client': [clientAirtableId]
+    });
+
+    return {
+      id: record.id,
+      content: record.get('Note') as string,
+      createdBy: record.get('Created By') as string,
+      createdAt: record.get('Created') as string,
+      clientId: record.get('Client') as string
+    };
+  } catch (error) {
+    console.error('Error creating note:', error);
+    return null;
+  }
+};
+
 // Ride interface
 export interface Ride {
   id: string;
