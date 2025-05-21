@@ -341,11 +341,16 @@ function ClientsPage() {
                     <div className="flex items-center">
                       <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                         <span className="text-gray-600 font-medium">
-                          {client.name.split(' ').map(n => n[0]).join('')}
+                          {client.name?.split(' ').map(n => n[0]).join('') || ''}
                         </span>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{client.name}</div>
+                        <div 
+                          className="text-sm font-medium text-gray-900 hover:text-blue-600 cursor-pointer"
+                          onClick={() => handleViewClient(client.id)}
+                        >
+                          {client.name}
+                        </div>
                         {client.contract && (
                           <div className="text-xs text-gray-500">
                             Contract Num: {client.contract}
