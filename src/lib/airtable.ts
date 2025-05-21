@@ -944,7 +944,7 @@ export const createClientNote = async (clientId: string, content: string, create
     console.log('content: ', content);
     console.log('userFullName: ', userFullName);
     console.log('clientAirtableId: ', clientAirtableId);
-    console.log('${clientId}: ', ${clientId});
+    console.log('${clientId}: ', {clientId});
     
     const record = await base('Notes').create({
       'Note': content,
