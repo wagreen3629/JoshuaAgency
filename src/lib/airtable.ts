@@ -958,6 +958,7 @@ export const fetchRideById = async (id: string): Promise<Ride | null> => {
 
     return {
       id: record.id,
+      OrgID: record.get('OrgID') as string,   
       clientId: record.get('Client ID') as string,
       rideNum: record.get('RideNum') as number,
       clientName: record.get('Client Name (from Client ID)') as string,
@@ -1031,7 +1032,7 @@ export const fetchClientRides = async (clientId: string): Promise<Ride[]> => {
 
     return records.map(record => ({
       id: record.id,
-      
+      OrgID: record.get('OrgID') as string,         
       clientId: record.get('Client ID') as string,
       rideNum: record.get('RideNum') as number,
       clientName: record.get('Client Name (from Client ID)') as string,
