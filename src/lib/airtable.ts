@@ -888,7 +888,7 @@ export const fetchClientNotes = async (clientId: string): Promise<Note[]> => {
 
     return records.map(record => ({
       id: record.id,
-      content: record.get('Note') as string,
+      content: record.get('Notes') as string,
       createdBy: record.get('Created By') as string,
       createdAt: record.get('Created Date') as string,
       clientId: record.get('ClientID') as string
