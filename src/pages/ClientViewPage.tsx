@@ -834,6 +834,7 @@ function ClientViewPage() {
           )}
         </div>
       </div>
+      {/* Notes */}
 
       {/* Recent Rides */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
