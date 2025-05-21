@@ -882,7 +882,7 @@ export const fetchClientNotes = async (clientId: string): Promise<Note[]> => {
 
     // Then fetch notes using the Client ID
     const records = await base('Notes').select({
-      filterByFormula: `{Client} = '${clientAirtableId}'`,
+      filterByFormula: `{ClientID} = '${clientAirtableId}'`,
       sort: [{ field: 'Created Date', direction: 'desc' }]
     }).all();
 
@@ -891,7 +891,7 @@ export const fetchClientNotes = async (clientId: string): Promise<Note[]> => {
       content: record.get('Note') as string,
       createdBy: record.get('Created By') as string,
       createdAt: record.get('Created Date') as string,
-      clientId: record.get('Client') as string
+      clientId: record.get('ClientID') as string
     }));
   } catch (error) {
     console.error('Error fetching client notes:', error);
@@ -942,7 +942,7 @@ export const createClientNote = async (clientId: string, content: string, create
     const record = await base('Notes').create({
       'Note': content,
       'Created By': userFullName,
-      'Client': [clientAirtableId]
+      'ClientID': [clientAirtableId]
     });
 
     return {
@@ -950,7 +950,7 @@ export const createClientNote = async (clientId: string, content: string, create
       content: record.get('Note') as string,
       createdBy: record.get('Created By') as string,
       createdAt: record.get('Created Date') as string,
-      clientId: record.get('Client') as string
+      clientId: record.get('Client Name') as string
     };
   } catch (error) {
     console.error('Error creating note:', error);
