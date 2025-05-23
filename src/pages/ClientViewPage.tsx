@@ -1192,18 +1192,16 @@ function ClientViewPage() {
               Unable to Create Ride
             </DialogTitle>
             <DialogDescription>
-              <strong>Client does not meet the following requirements:</strong>
+              <p className="mb-4"><strong>Client does not meet the following requirements:</strong></p>
+				<ol className="list-disc list-inside space-y-2">
+				  {validationErrors.map((error, index) => (
+					<li key={index} className="text-red-600">
+					  {error}
+					</li>
+				  ))}
+				</ol>
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <ol className="list-disc list-inside space-y-2">
-              {validationErrors.map((error, index) => (
-                <li key={index} className="text-red-600">
-                  {error}
-                </li>
-              ))}
-            </ol>
-          </div>
           <DialogFooter>
             <Button
               onClick={() => setShowValidationDialog(false)}
