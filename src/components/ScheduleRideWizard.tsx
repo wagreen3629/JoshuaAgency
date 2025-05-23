@@ -164,7 +164,8 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
         })();
       
         return (
-          c.status === 'Active'                         // 5. Address has ≥ 2 components
+          c.status === 'Active' &&                      // 1. Active status
+          Boolean(String(c.contract || '').trim())
             );
           });
 
