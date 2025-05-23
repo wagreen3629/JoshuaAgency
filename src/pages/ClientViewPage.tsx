@@ -208,7 +208,7 @@ function ClientViewPage() {
     navigate('/rides/schedule', { 
       state: { 
         clientId,
-        returnPath: 'clients/'${id}
+        returnPath: `/clients/${id}`
       }
     });
   };
@@ -812,6 +812,7 @@ function ClientViewPage() {
               {addressError && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
                   <div className="flex items-center">
+                    
                     <AlertCircle className="h-4 w-4 mr-2" />
                     {addressError}
                   </div>
