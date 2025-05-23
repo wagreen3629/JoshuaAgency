@@ -170,14 +170,14 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
           return links.filter(Boolean).length = 1;   // at least one non-empty links
         };
 
-        console.log('Client Phone:', c.phone);
+        //console.log('Client Phone:', c.phone);
           
         return (
           c.status === 'Active' &&                      // 1. Active status
           c.reviewed === true &&                        // 4. Reviewed is checked
           hasTwoAddressParts  &&                        // 5. Address has ≥ 2 components
           hasContract &&                                 // 2. Contract present (safely handle null/undefined)
-          c.clientPhone != null                          // 3. Phone present
+          String(c.phone ?? '').trim().length > 0        // 3. Phone present
             );
           });
 
