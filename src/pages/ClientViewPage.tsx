@@ -1161,7 +1161,10 @@ function ClientViewPage() {
       <Dialog open={showDeleteNoteDialog} onOpenChange={setShowDeleteNoteDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Note</DialogTitle>
+            <DialogTitle className="flex items-center text-red-600">
+              <AlertTriangle className="h-5 w-5 mr-2" />
+              Unable to Create Ride
+            </DialogTitle>
             <DialogDescription>
               Are you sure you want to delete this note? This action cannot be undone.
             </DialogDescription>
