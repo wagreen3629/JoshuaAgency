@@ -175,7 +175,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
           c.reviewed === true &&                        // 4. Reviewed is checked
           hasTwoAddressParts  &&                        // 5. Address has ≥ 2 components
           hasContract &&                                 // 2. Contract present (safely handle null/undefined)
-          String(c.clientPhone ?? '').trim().length > 0  // 3. Phone present
+          String(c.clientPhone).length > 0  // 3. Phone present
             );
           });
 
