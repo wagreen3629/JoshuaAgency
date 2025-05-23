@@ -37,15 +37,16 @@ export function UsersPage() {
   // Check if current user is admin
   useEffect(() => {
     const checkAdminStatus = async () => {
-      if (!authUser || authLoading) return;
+      if (!authUser?.id || authLoading) return;
       
       try {
-        const { data: profile } = await supabase
+        const { data: profile, error } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', authUser.id)
           .single();
         
+        if (error) throw error;
         setIsAdmin(profile?.role === 'admin');
       } catch (err) {
         console.error('Error checking admin status:', err);
@@ -54,7 +55,7 @@ export function UsersPage() {
     };
 
     if (!authLoading) checkAdminStatus();
-  }, [authUser]);
+  }, [authUser?.id, authLoading]);
 
   const getUsers = async () => {
     try {
