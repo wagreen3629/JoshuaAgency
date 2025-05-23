@@ -191,7 +191,7 @@ function ClientsPage() {
     navigate('/rides/schedule', { 
       state: { 
         clientId,
-        returnPath: '/clients'
+        returnPath: '/clients/'clientId
       }
     });
   };
