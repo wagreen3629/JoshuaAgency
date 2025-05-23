@@ -172,7 +172,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
             );
           });
         
-        const clientsData = filteredClients();
+        const clientsData = filteredClients;
         setClients(clientsData);
         setFilteredClients(clientsData);
         
