@@ -664,7 +664,6 @@ export const fetchClients = async (): Promise<Client[]> => {
       throw new Error('Airtable base not initialized');
     }
 
-    // Initialize arrays to store all records and contract data
     let allRecords = [];
 
     await base(tableName).select({
@@ -676,13 +675,11 @@ export const fetchClients = async (): Promise<Client[]> => {
     });
 
 
-    // Get all contracts first
     const contractRecords = await base('Contracts').select({
       maxRecords: 100,
       view: "Grid view"
     }).all();
 
-    // Create a map of contract IDs to contract numbers
     const contractMap = new Map(
       contractRecords.map(record => [
         record.id,
@@ -690,7 +687,37 @@ export const fetchClients = async (): Promise<Client[]> => {
       ])
     );
 
-    return allRecords.map(record => ({
+    // Filter and process records
+    const eligibleClients = [];
+    
+    for (const record of allRecords) {
+      // Check basic criteria
+      const status = record.get('Status') as string;
+      const reviewed = record.get('Reviewed') as boolean;
+      const phone = record.get('Client Telephone') as string;
+      const contractIds = record.get('Contract') as string[];
+      
+      // Skip if basic criteria not met
+      if (status !== 'Active' || 
+          !reviewed || 
+          !phone || 
+          !contractIds?.length) {
+        continue;
+      }
+      
+      // Check addresses
+      const clientAirtableId = record.get('Client ID') as string;
+      if (!clientAirtableId) continue;
+      
+      const addresses = await base('Addresses').select({
+        filterByFormula: `AND({Client} = '${clientAirtableId}', {Status} = 'Active')`,
+      }).all();
+      
+      // Skip if less than 2 active addresses
+      if (addresses.length < 2) continue;
+      
+      // Client is eligible, add to results
+      eligibleClients.push({
       id: record.id,
       name: record.get('Client Name') as string,
       email: record.get('Client Email') as string,
@@ -699,7 +726,10 @@ export const fetchClients = async (): Promise<Client[]> => {
       reviewed: record.get('Reviewed') as boolean,
       createdDate: record.get('createdDate') as string,
       contract: record.get('Contract') ? contractMap.get((record.get('Contract') as string[])[0]) || null : null
-    }));
+      });
+    }
+    
+    return eligibleClients;
   } catch (error) {
     console.error('Error fetching clients:', error);
     throw error;
