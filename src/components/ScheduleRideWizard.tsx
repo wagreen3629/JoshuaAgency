@@ -165,9 +165,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
         return (
           c.status === 'Active' &&                      // 1. Active status
           c.reviewed === true &&                        // 4. Reviewed is checked
-          hasTwoAddressParts  &&                        // 5. Address has ≥ 2 components
-          Boolean(String(c.contract || '').trim()) &&   // 2. Contract present (safely handle null/undefined)
-          Boolean(c.clientPhone?.trim())                // 3. Phone present
+          hasTwoAddressParts  
             );
           });
 
