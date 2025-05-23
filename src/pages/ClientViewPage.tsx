@@ -520,7 +520,7 @@ function ClientViewPage() {
             Edit Client
           </Button>
           <Button 
-            onClick={() => handleScheduleRide(${id}), { 
+            onClick={() => handleScheduleRide(id), { 
               state: { 
                 clientId: id,
                 returnPath: `/clients/${id}`
