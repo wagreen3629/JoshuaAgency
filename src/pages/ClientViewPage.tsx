@@ -1196,13 +1196,13 @@ function ClientViewPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <ul className="list-disc list-inside space-y-2">
+            <ol className="list-disc list-inside space-y-2">
               {validationErrors.map((error, index) => (
                 <li key={index} className="text-red-600">
                   {error}
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
           <DialogFooter>
             <Button
