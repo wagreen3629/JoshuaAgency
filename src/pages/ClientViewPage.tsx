@@ -520,12 +520,7 @@ function ClientViewPage() {
             Edit Client
           </Button>
           <Button 
-            onClick={() => handleScheduleRide(${id}), { 
-              state: { 
-                clientId: id,
-                returnPath: `/clients/${id}`
-              }
-            })}
+            onClick={() => handleScheduleRide(id)}
             className="flex items-center"
           >
             <Car className="h-4 w-4 mr-2" />
@@ -1060,12 +1055,7 @@ function ClientViewPage() {
             </p>
             <div className="mt-6">
               <Button
-                onClick={() => navigate('/rides/schedule', { 
-                  state: { 
-                    clientId: id,
-                    returnPath: `/clients/${id}`
-                  }
-                })}
+                onClick={() => handleScheduleRide(id)}
               >
                 Schedule First Ride
               </Button>
@@ -1193,4 +1183,3 @@ function ClientViewPage() {
 }
 
 export {ClientViewPage};
-
