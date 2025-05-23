@@ -170,7 +170,7 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
           return links.filter(Boolean).length = 1;   // at least one non-empty links
         };
 
-        console.log('Client Phone:', c.clientPhone);
+        console.log('Client Phone:', c.clientTelephone);
           
         return (
           c.status === 'Active' &&                      // 1. Active status
