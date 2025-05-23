@@ -43,6 +43,7 @@ import {
   deleteClientNote,
   Note
 } from '../lib/airtable';
+import { validateClientForRide } from '../lib/ride-validation';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
 
 function ClientViewPage() {
@@ -71,6 +72,8 @@ function ClientViewPage() {
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
   const [showDeleteNoteDialog, setShowDeleteNoteDialog] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+  const [showValidationDialog, setShowValidationDialog] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // Function to validate address
   const validateAddress = (address: string): boolean => {
@@ -349,6 +352,25 @@ function ClientViewPage() {
     });
   };
 
+  const handleScheduleRide = async () => {
+    if (!client?.id) return;
+    
+    const validation = await validateClientForRide(client.id);
+    
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      setShowValidationDialog(true);
+      return;
+    }
+    
+    navigate('/rides/schedule', { 
+      state: { 
+        clientId: client.id,
+        returnPath: `/clients/${client.id}`
+      }
+    });
+  };
+
   const handleToggleReviewed = async () => {
     if (!client?.id) return;
     
@@ -503,12 +525,7 @@ function ClientViewPage() {
             Edit Client
           </Button>
           <Button 
-            onClick={() => navigate('/rides/schedule', { 
-              state: { 
-                clientId: id,
-                returnPath: `/clients/${id}`
-              }
-            })}
+            onClick={handleScheduleRide}
             className="flex items-center"
           >
             <Car className="h-4 w-4 mr-2" />
@@ -800,379 +817,4 @@ function ClientViewPage() {
               {addressError && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
                   <div className="flex items-center">
-                    <AlertCircle className="h-4 w-4 mr-2" />
-                    {addressError}
-                  </div>
-                </div>
-              )}
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                  Title <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  value={newAddress.title}
-                  onChange={(e) => setNewAddress(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  required
-                  placeholder="e.g., Doctor's Office, Pharmacy"
-                />
-              </div>
-              <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-                  Address <span className="text-red-500">*</span>
-                </label>
-                <div className="mt-1">
-                <input
-                  type="text"
-                  id="address"
-                  value={newAddress.address}
-                  onChange={(e) => {
-                    setNewAddress(prev => ({ ...prev, address: e.target.value }));
-                    setAddressError(null);
-                  }}
-                  placeholder="123 Main St, Columbus, OH 43215"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  required
-                />
-                <p className="mt-1 text-xs text-gray-500">
-                  Enter complete address including street, city, and state
-                </p>
-                </div>
-              </div>
-              <div>
-                <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
-                  Notes
-                </label>
-                <textarea
-                  id="notes"
-                  value={newAddress.notes}
-                  onChange={(e) => setNewAddress(prev => ({ ...prev, notes: e.target.value }))}
-                  rows={2}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-              <div className="flex justify-end">
-                <Button type="submit" size="sm">
-                  Add Address
-                </Button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        <div className="divide-y divide-gray-200">
-          {addressLoading ? (
-            <div className="px-6 py-4 text-center text-gray-500">
-              Loading addresses...
-            </div>
-          ) : addresses.length === 0 ? (
-            <div className="px-6 py-4 text-center text-gray-500">
-              No approved destinations yet.
-            </div>
-          ) : (
-            addresses.map((address) => (
-              <div key={address.id} className="px-6 py-4">
-                <div className="flex items-start space-x-4">
-                  {address.thumbnail && (
-                    <div className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden">
-                      <img 
-                        src={address.thumbnail} 
-                        alt={`Thumbnail for ${address.address}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center">
-                          <MapPin className="h-4 w-4 text-gray-400 mr-2" />
-                          <span className="text-gray-900">{address.address}</span>
-                          <span className={`ml-3 px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            address.status === 'Active' 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {address.status}
-                          </span>
-                        </div>
-                        {address.notes && (
-                          <p className="mt-1 text-sm text-gray-500">{address.notes}</p>
-                        )}
-                      </div>
-                      <div className="ml-4 flex items-center space-x-2">
-                        <button
-                          onClick={() => handleToggleAddressStatus(address.id, address.status)}
-                          className={`p-1 rounded-full hover:bg-gray-100 ${
-                            address.status === 'Active' 
-                              ? 'text-green-600 hover:text-green-700' 
-                              : 'text-gray-400 hover:text-gray-500'
-                          }`}
-                          title={address.status === 'Active' ? 'Disable Address' : 'Enable Address'}
-                        >
-                          {address.status === 'Active' ? (
-                            <ToggleRight className="h-5 w-5" />
-                          ) : (
-                            <ToggleLeft className="h-5 w-5" />
-                          )}
-                        </button>
-                        <button
-                          onClick={() => handleDeleteAddress(address.id)}
-                          className="p-1 rounded-full text-red-600 hover:text-red-700 hover:bg-gray-100"
-                          title="Delete Address"
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-      {/* Notes */}
-      <div className="bg-white shadow rounded-lg overflow-hidden mb-6">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold text-gray-900">Notes</h3>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowAddNote(!showAddNote)}
-              className="flex items-center"
-            >
-              {showAddNote ? 'Cancel' : 'Add Note'}
-            </Button>
-          </div>
-        </div>
-
-        {showAddNote && (
-          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <form onSubmit={handleAddNote} className="space-y-4">
-              {noteError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-                  <div className="flex items-center">
-                    <AlertCircle className="h-4 w-4 mr-2" />
-                    {noteError}
-                  </div>
-                </div>
-              )}
-              <div>
-                <label htmlFor="noteContent" className="block text-sm font-medium text-gray-700">
-                  Note Content <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="noteContent"
-                  value={newNote}
-                  onChange={(e) => setNewNote(e.target.value)}
-                  rows={3}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  required
-                  placeholder="Enter note details here..."
-                />
-              </div>
-              <div className="flex justify-end">
-                <Button 
-                  type="submit" 
-                  size="sm"
-                  disabled={noteSubmitting}
-                >
-                  {noteSubmitting ? 'Saving...' : 'Add Note'}
-                </Button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        <div className="divide-y divide-gray-200">
-          {notesLoading ? (
-            <div className="px-6 py-4 text-center text-gray-500">
-              Loading notes...
-            </div>
-          ) : notes.length === 0 ? (
-            <div className="px-6 py-4 text-center text-gray-500">
-              No notes available for this client.
-            </div>
-          ) : (
-            notes.map((note) => (
-              <div key={note.id} className="px-6 py-4">
-                <div className="flex flex-col space-y-2">
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center">
-                      <User className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="font-medium text-gray-900">{note.createdBy}</span>
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      <Calendar className="h-4 w-4 inline mr-1" />
-                      {formatDate(note.createdAt)}
-                    </div>
-                    <button
-                      onClick={() => handleDeleteNote(note.id)}
-                      className="ml-2 p-1 rounded-full text-red-600 hover:text-red-700 hover:bg-gray-100"
-                      title="Delete Note"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <div className="text-gray-700 whitespace-pre-line">
-                    {note.content}
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-
-      {/* Recent Rides */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-bold text-gray-900">Most Recent Rides (10)</h3>
-        </div>
-        {rides.length === 0 ? (
-          <div className="p-6 text-center">
-            <Car className="h-12 w-12 mx-auto text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No rides yet</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              Get started by scheduling a ride for this client.
-            </p>
-            <div className="mt-6">
-              <Button
-                onClick={() => navigate('/rides/schedule', { 
-                  state: { 
-                    clientId: id,
-                    returnPath: `/clients/${id}`
-                  }
-                })}
-              >
-                Schedule First Ride
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pickup
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Dropoff
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {rides.map((ride) => (
-                  <tr key={ride.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 text-gray-400 mr-1" />
-                        <span className="text-sm text-gray-900">
-                          {formatDate(ride.dropoffDateTime)}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{ride.pickupAddress}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{ride.dropoffAddress}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        ride.status === 'Completed'
-                          ? 'bg-green-100 text-green-800'
-                          : ride.status === 'Cancelled'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-blue-100 text-blue-800'
-                      }`}>
-                        {ride.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleViewRide(ride.id)}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-      
-      {/* Delete Address Confirmation Dialog */}
-      <Dialog open={showDeleteAddressDialog} onOpenChange={setShowDeleteAddressDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Address</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this address? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowDeleteAddressDialog(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={confirmDeleteAddress}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Delete Address
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Delete Note Confirmation Dialog */}
-      <Dialog open={showDeleteNoteDialog} onOpenChange={setShowDeleteNoteDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Note</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this note? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowDeleteNoteDialog(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={confirmDeleteNote}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Delete Note
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
-
-export {ClientViewPage};
+                    <AlertCircle className="
