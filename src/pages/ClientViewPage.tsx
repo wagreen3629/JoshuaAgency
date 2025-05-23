@@ -1195,7 +1195,7 @@ function ClientViewPage() {
               <p className="mb-4"><strong>Client does not meet the following requirements:</strong></p>
 				<ol className="list-disc list-inside space-y-2">
 				  {validationErrors.map((error, index) => (
-					<li key={index} className="text-red-600">
+					<li key={index} className="text-sm text-gray-900">
 					  {error}
 					</li>
 				  ))}
