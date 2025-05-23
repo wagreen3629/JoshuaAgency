@@ -161,11 +161,20 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
         
           return links.filter(Boolean).length >= 2;   // at least two non-empty links
         };
+        const hasContract = (c: Client): boolean => {
+          if (!c.contract) return false;               // nothing linked at all
+        
+          // Linked field is usually an array; handle a single value defensively
+          const links = Array.isArray(c.contract) ? c.contract : [c.contract];
+        
+          return links.filter(Boolean).length = 1;   // at least one non-empty links
+        };
       
         return (
           c.status === 'Active' &&                      // 1. Active status
           c.reviewed === true &&                        // 4. Reviewed is checked
-          hasTwoAddressParts  
+          hasTwoAddressParts  &&                        // 5. Address has ≥ 2 components
+          hasContract 
             );
           });
 
