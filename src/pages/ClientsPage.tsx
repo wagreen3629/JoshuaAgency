@@ -480,11 +480,11 @@ function ClientsPage() {
                 </DialogTitle>
                 <DialogDescription>
                   <p className="mb-4"><strong>Client does not meet the following requirements:</strong></p>
-                  <ul className="list-disc pl-5 space-y-2">
+                  <ol className="list-disc pl-5 space-y-2">
                     {validationErrors.map((error, index) => (
                       <li key={index} className="text-sm text-gray-900">{error}</li>
                     ))}
-                  </ul>
+                  </ol>
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
