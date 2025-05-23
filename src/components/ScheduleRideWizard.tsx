@@ -173,8 +173,8 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
           });
         
         const clientsData = filteredClients;
-        setClients(clientsData);
-        setFilteredClients(clientsData);
+        setClients(filteredClients);
+        setFilteredClients(filteredClients);
         
         // If defaultClientId is provided, select that client
         if (defaultClientId) {
