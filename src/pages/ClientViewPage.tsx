@@ -43,6 +43,7 @@ import {
   deleteClientNote,
   Note
 } from '../lib/airtable';
+import { validateClientForRide } from '../lib/ride-validation';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
 
 function ClientViewPage() {
@@ -71,6 +72,8 @@ function ClientViewPage() {
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
   const [showDeleteNoteDialog, setShowDeleteNoteDialog] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [showValidationDialog, setShowValidationDialog] = useState(false);
 
   // Function to validate address
   const validateAddress = (address: string): boolean => {
@@ -197,7 +200,7 @@ function ClientViewPage() {
   }, [id]);
 
   const handleScheduleRide = async (clientId: string) => {
-  const validation = await validateClientForRide(clientId);
+    const validation = await validateClientForRide(clientId);
     
     if (!validation.isValid) {
       setValidationErrors(validation.errors);
@@ -1175,6 +1178,34 @@ function ClientViewPage() {
               className="bg-red-600 hover:bg-red-700 text-white"
             >
               Delete Note
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Validation Error Dialog */}
+      <Dialog open={showValidationDialog} onOpenChange={setShowValidationDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cannot Schedule Ride</DialogTitle>
+            <DialogDescription>
+              The following issues need to be resolved before scheduling a ride:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <ul className="list-disc list-inside space-y-2">
+              {validationErrors.map((error, index) => (
+                <li key={index} className="text-red-600">
+                  {error}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() => setShowValidationDialog(false)}
+            >
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>
