@@ -171,10 +171,12 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
           hasTwoAddressParts                            // 5. Address has ≥ 2 components
             );
           });
+
+        console.log('Filter Records:', filteredClients);
         
         const clientsData = filteredClients;
-        setClients(filteredClients);
-        setFilteredClients(filteredClients);
+        setClients(clientsData);
+        setFilteredClients(clientsData);
         
         // If defaultClientId is provided, select that client
         if (defaultClientId) {
