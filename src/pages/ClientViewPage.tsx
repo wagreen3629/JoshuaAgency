@@ -1192,7 +1192,7 @@ function ClientViewPage() {
               Unable to Create Ride
             </DialogTitle>
             <DialogDescription>
-              The following issues need to be resolved before scheduling a ride:
+              <strong>Client does not meet the following requirements:</strong>
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
