@@ -1686,6 +1686,3 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
 };
 
 export { ScheduleRideWizard };
-
-
-export { ScheduleRideWizard }
