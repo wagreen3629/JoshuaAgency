@@ -1,4 +1,4 @@
-import { fetchClientById, fetchClientAddresses } from './airtable';
+import { supabase } from './supabase';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -9,8 +9,16 @@ export async function validateClientForRide(clientId: string): Promise<Validatio
   const errors: string[] = [];
 
   try {
-    // Get client details from Airtable
-    const client = await fetchClientById(clientId);
+    // Get client details from Supabase
+    const { data: client, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', clientId)
+      .single();
+
+    if (error) {
+      throw error;
+    }
 
     if (!client) {
       throw new Error('Client not found');
@@ -27,7 +35,7 @@ export async function validateClientForRide(clientId: string): Promise<Validatio
     }
 
     // 3. Check phone number
-    if (!client.clientTelephone) {
+    if (!client.phone) {
       errors.push('Client must have a registered phone number');
     }
 
@@ -37,12 +45,17 @@ export async function validateClientForRide(clientId: string): Promise<Validatio
     }
 
     // 5. Check registered addresses
-    const addresses = await fetchClientAddresses(clientId);
-    
-    // Filter for active addresses only
-    const activeAddresses = addresses.filter(addr => addr.status === 'Active');
+    const { data: addresses, error: addressError } = await supabase
+      .from('addresses')
+      .select('*')
+      .eq('profile_id', clientId)
+      .eq('status', 'Active');
 
-    if (activeAddresses.length < 2) {
+    if (addressError) {
+      throw addressError;
+    }
+
+    if (!addresses || addresses.length < 2) {
       errors.push('Client must have at least 2 registered active addresses');
     }
 
