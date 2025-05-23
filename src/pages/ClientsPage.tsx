@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Filter, Calendar, Users, AlertCircle, Upload, X, Check, Car, ExternalLink, Edit } from 'lucide-react';
+import { Plus, Search, Filter, Calendar, Users, AlertCircle, Upload, X, Check, Car, ExternalLink, Edit, AlertTriangle } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { Button } from '../components/Button';
 import { fetchClients, toggleClientReviewed, deleteClient, Client, fetchContracts } from '../lib/airtable';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { validateClientForRide } from '../lib/ride-validation';
 
 function ClientsPage() {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ function ClientsPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [reviewedFilter, setReviewedFilter] = useState('all');
+  const [showValidationDialog, setShowValidationDialog] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -174,6 +177,23 @@ function ClientsPage() {
   const openDeleteDialog = (id: string) => {
     setSelectedClientId(id);
     setShowDeleteDialog(true);
+  };
+
+  const handleScheduleRide = async (clientId: string) => {
+    const validation = await validateClientForRide(clientId);
+    
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      setShowValidationDialog(true);
+      return;
+    }
+    
+    navigate('/rides/schedule', { 
+      state: { 
+        clientId,
+        returnPath: '/clients'
+      }
+    });
   };
 
   const formatDate = (dateString: string) => {
@@ -390,12 +410,7 @@ function ClientsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
-                      onClick={() => navigate('/rides/schedule', { 
-                        state: { 
-                          clientId: client.id,
-                          returnPath: '/clients'
-                        } 
-                      })}
+                      onClick={() => handleScheduleRide(client.id)}
                       className="text-blue-600 hover:text-blue-900 mr-3"
                       title="Schedule Ride"
                     >
@@ -452,6 +467,26 @@ function ClientsPage() {
                   Delete Client
                 </Button>
               </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          
+          {/* Validation Error Dialog */}
+          <Dialog open={showValidationDialog} onOpenChange={setShowValidationDialog}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="flex items-center text-red-600">
+                  <AlertTriangle className="h-5 w-5 mr-2" />
+                  Unable to Create Ride
+                </DialogTitle>
+                <DialogDescription>
+                  <p className="mb-4">Client does not meet the following requirements:</p>
+                  <ul className="list-disc pl-5 space-y-2">
+                    {validationErrors.map((error, index) => (
+                      <li key={index} className="text-sm text-gray-900">{error}</li>
+                    ))}
+                  </ul>
+                </DialogDescription>
+              </DialogHeader>
             </DialogContent>
           </Dialog>
           
