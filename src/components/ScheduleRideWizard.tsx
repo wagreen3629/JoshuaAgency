@@ -151,6 +151,28 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
     const loadData = async () => {
       try {
         setLoading(true);
+
+        const filteredClients = (await fetchClients()).filter((c) => {
+        const hasTwoAddressParts = (() => {
+          if (!c.address) return false;
+      
+          // allow either an array (['street', 'city', ...]) or a single string ("street, city")
+          if (Array.isArray(c.address)) {
+            return c.address.filter(Boolean).length >= 2;
+          }
+          return c.address.split(',').map(s => s.trim()).filter(Boolean).length >= 2;
+        })();
+      
+        return (
+          c.status === 'Active' &&                      // 1. Active status
+          Boolean(c.contract?.trim()) &&                // 2. Contract present
+          Boolean(c.clientPhone?.trim()) &&             // 3. Phone present
+          c.reviewed === true &&                        // 4. Reviewed is checked
+          hasTwoAddressParts                            // 5. Address has ≥ 2 components
+        );
+      });
+
+        
         const clientsData = await fetchClients();
         setClients(clientsData);
         setFilteredClients(clientsData);
