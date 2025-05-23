@@ -196,6 +196,23 @@ function ClientViewPage() {
     getNotes();
   }, [id]);
 
+  const handleScheduleRide = async (clientId: string) => {
+  const validation = await validateClientForRide(clientId);
+    
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      setShowValidationDialog(true);
+      return;
+    }
+    
+    navigate('/rides/schedule', { 
+      state: { 
+        clientId,
+        returnPath: '/clients'
+      }
+    });
+  };
+  
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id) return;
