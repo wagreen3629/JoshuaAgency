@@ -169,9 +169,8 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
           Boolean(c.clientPhone?.trim()) &&             // 3. Phone present
           c.reviewed === true &&                        // 4. Reviewed is checked
           hasTwoAddressParts                            // 5. Address has ≥ 2 components
-        );
-      });
-
+            );
+          });
         
         const clientsData = await fetchClients();
         setClients(clientsData);
