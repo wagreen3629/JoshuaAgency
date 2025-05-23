@@ -487,6 +487,13 @@ function ClientsPage() {
                   </ol>
                 </DialogDescription>
               </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => setShowValidationDialog(false)}
+                >
+                  Close
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
           
