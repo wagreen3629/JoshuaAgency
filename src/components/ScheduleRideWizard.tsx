@@ -153,15 +153,14 @@ const ScheduleRideWizard = ({ defaultClientId, onCancel, onComplete }: ScheduleR
         setLoading(true);
 
         const filteredClients = (await fetchClients()).filter((c) => {
-        const hasTwoAddressParts = (() => {
-          if (!c.address) return false;
-      
-          // allow either an array (['street', 'city', ...]) or a single string ("street, city")
-          if (Array.isArray(c.address)) {
-            return c.address.filter(Boolean).length >= 2;
-          }
-          return c.address.split(',').map(s => s.trim()).filter(Boolean).length >= 2;
-        })();
+        const hasTwoAddressParts = (c: Client): boolean => {
+          if (!c.address) return false;               // nothing linked at all
+        
+          // Linked field is usually an array; handle a single value defensively
+          const links = Array.isArray(c.address) ? c.address : [c.address];
+        
+          return links.filter(Boolean).length >= 2;   // at least two non-empty links
+        };
       
         return (
           c.status === 'Active' &&                      // 1. Active status
