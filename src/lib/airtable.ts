@@ -1225,16 +1225,10 @@ export const fetchUberZones = async (latitude: number, longitude: number): Promi
     
     // Get bearer token from UberTokens table
     const tokenRecords = await base('UberTokens').select({
-      maxRecords: 1,
-      view: "Grid view",
-      filterByFormula: `AND(
-        {TokenType} = 'Bearer',
-        FIND('health.sandbox', {Scope}) > 0,
-        {Status} = 'Active',
-        NOW() < {expDate}
-      )`
+      maxRecords: 1
     }).all();
 
+    
     console.log('Token records found:', {
       count: tokenRecords.length,
       hasValidToken: tokenRecords.length > 0
