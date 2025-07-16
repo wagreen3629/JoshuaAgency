@@ -193,9 +193,20 @@ export function SignaturesPage() {
       setExporting(true);
       setError(null);
       
-      // Get all signatures with "Prepared" status and a valid email address from the full signatures list
-       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      // Create export parameters object
+      const exportParams = {
+        fromDate,
+        toDate,
+        dateError,
+        searchTerm,
+        statusFilter,
+        contractFilter
+      };
+      
+      console.log('Export parameters:', exportParams);
 
+      // Get all signatures with "Prepared" status and a valid email address
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const preparedSignatures = signatures.filter(sig => 
         sig.status === 'Prepared' && emailRegex.test(sig.clientEmail)
       );
@@ -205,14 +216,13 @@ export function SignaturesPage() {
         signatures: preparedSignatures.map(s => ({ id: s.id, status: s.status }))
       });
 
-      
       if (preparedSignatures.length === 0) {
         throw new Error('No signatures with "Prepared" status found. Please adjust your filters to include signatures that need to be exported.');
       }
 
-      // Fetch signatures with additional fields for export
+      // Fetch signatures with additional fields for export using the parameters
       console.log('Fetching extended signature data for export');
-      const exportSignatures = await fetchSignaturesForExport();
+      const exportSignatures = await fetchSignaturesForExport(exportParams);
       console.log('Fetched export signatures:', {
         count: exportSignatures.length,
         sample: exportSignatures[0]
@@ -221,6 +231,7 @@ export function SignaturesPage() {
       if (!exportSignatures || !Array.isArray(exportSignatures)) {
         throw new Error('Failed to fetch signatures for export. Please try again.');
       }
+	  
       
       console.log('--- Export Triggered ---');
       console.log('fromDate:', fromDate);

@@ -464,18 +464,64 @@ export const fetchSignatures = async (): Promise<Signature[]> => {
   }
 };
 
+interface SignatureExportParams {
+  fromDate?: Date;
+  toDate?: Date;
+  dateError?: string;
+  searchTerm?: string;
+  statusFilter?: string;
+  contractFilter?: string;
+}
 
 // Fetch signatures with additional fields for export
-export const fetchSignaturesForExport = async (): Promise<SignatureExport[]> => {
+export const fetchSignaturesForExport = async (params?: SignatureExportParams): Promise<SignatureExport[]> => {
   try {
     if (!base) {
       throw new Error('Airtable base not initialized');
     }
 
+    let filterFormula = "{Status} = 'Prepared'";
+
+    // Add date range filter if dates are provided
+    if (params?.fromDate && !params.dateError) {
+      const fromDateStr = params.fromDate.toISOString();
+      filterFormula += ` AND IS_AFTER({Drop-Off Date (Local) (from Ride)}, '${fromDateStr}')`;
+    }
+    
+    if (params?.toDate && !params.dateError) {
+      const toDateStr = params.toDate.toISOString();
+      filterFormula += ` AND IS_BEFORE({Drop-Off Date (Local) (from Ride)}, '${toDateStr}')`;
+    }
+
+    // Add contract filter if provided
+    if (params?.contractFilter && params.contractFilter !== 'all') {
+      filterFormula += ` AND {Contract Name (from Contract) (from Client)} = '${params.contractFilter}'`;
+    }
+
+    // Add status filter if provided
+    if (params?.statusFilter && params.statusFilter !== 'all') {
+      filterFormula += ` AND {Status} = '${params.statusFilter}'`;
+    }
+
+    // Add search term filter if provided
+    if (params?.searchTerm) {
+      const term = params.searchTerm.replace(/'/g, "\\'");
+      filterFormula += ` AND (
+        FIND('${term}', LOWER({Client Name (from Client)})) > 0 OR
+        FIND('${term}', LOWER({Client Email (from Client)})) > 0 OR
+        FIND('${term}', LOWER({City (from Ride)})) > 0 OR
+        FIND('${term}', LOWER({Pickup Address (from Ride)})) > 0 OR
+        FIND('${term}', LOWER({Drop-off Address (from Ride)})) > 0 OR
+        FIND('${term}', LOWER({Guest Name (from Ride)})) > 0
+      )`;
+    }
+
+    console.log('Using filter formula:', filterFormula);
+
     const records = await base('Signatures').select({
       maxRecords: 5000,
       view: "Grid view",
-      filterByFormula: "{Status} = 'Prepared'"
+      filterByFormula: filterFormula
     }).all();
 
     return records.map(record => ({
@@ -504,6 +550,8 @@ export const fetchSignaturesForExport = async (): Promise<SignatureExport[]> => 
     throw error;
   }
 };
+
+
 
 // Client interfaces
 export interface Client {
