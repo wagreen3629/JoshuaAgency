@@ -65,8 +65,6 @@ export function SignaturesPage() {
     // Filter signatures based on search term, status filter, and date range
     let result = signatures;
     
-    console.log('Filtering signatures with contract filter:', contractFilter);
-    
     // Apply contract filter
     if (contractFilter !== 'all') {
       result = result.filter(signature => {
@@ -77,6 +75,8 @@ export function SignaturesPage() {
           String(name || '').toLowerCase() === contractFilter.toLowerCase()
         );
       });
+    
+    	console.log('Filtering signatures with contract filter:', contractFilter);
     }
     
     if (searchTerm) {
@@ -88,6 +88,8 @@ export function SignaturesPage() {
         const pickupAddress = String(signature.pickupAddress || '').toLowerCase();
         const dropoffAddress = String(signature.dropoffAddress || '').toLowerCase();
         const guestName = String(signature.guestName || '').toLowerCase();
+    
+    		console.log('Filtering signatures with term filter:', term);
         
         return (
           clientName.includes(term) ||
@@ -104,6 +106,8 @@ export function SignaturesPage() {
       result = result.filter(signature => 
         String(signature.status || '').toLowerCase() === statusFilter.toLowerCase()
       );
+    
+    		console.log('Filtering signatures with statusFilter filter:', statusFilter);
     }
     
     // Apply date range filter using dropoffDateTime
@@ -113,6 +117,8 @@ export function SignaturesPage() {
         const dropoffDate = new Date(signature.dropoffDateTime);
         return isValid(dropoffDate) && dropoffDate >= startDate;
       });
+    
+    		console.log('Filtering signatures with fromDate filter:', fromDate);
     }
     
     if (toDate && isValid(toDate)) {
@@ -121,6 +127,8 @@ export function SignaturesPage() {
         const dropoffDate = new Date(signature.dropoffDateTime);
         return isValid(dropoffDate) && dropoffDate <= endDate;
       });
+    
+    		console.log('Filtering signatures with endDate filter:', endDate);
     }
     
     setFilteredSignatures(result);
@@ -171,6 +179,8 @@ export function SignaturesPage() {
     setSearchTerm('');
     setStatusFilter('all');
     setCurrentPage(1); // Reset to first page
+    
+    		console.log('Filtering Reset');
   };
 
   const handleAddSignature = () => {
@@ -225,19 +235,20 @@ export function SignaturesPage() {
         toDate !== undefined ||
         dateError !== undefined ||
         (searchTerm && searchTerm.trim() !== '') ||
-        statusFilter !== 'all';
+        statusFilter !== 'all'||
+				contractFilter !== 'all';
       
       console.log('Is any filter active?', isFilterActive);
       
       let filteredExportSignatures;
       
       if (isFilterActive) {
-        //console.log('Applying filters based on filtered IDs from preparedSignatures.');
-        //const filteredIds = new Set(preparedSignatures.map(sig => sig.id));
-        //console.log('Filtered IDs count:', filteredIds.size);
-        //filteredExportSignatures = exportSignatures.filter(sig => filteredIds.has(sig.id));
+        console.log('Applying filters based on filtered IDs from preparedSignatures.');
+        const filteredIds = new Set(preparedSignatures.map(sig => sig.id));
+        console.log('Filtered IDs count:', filteredIds.size);
+        filteredExportSignatures = exportSignatures.filter(sig => filteredIds.has(sig.id));
         console.log('Filters active: exporting all fetched prepared records.');
-        filteredExportSignatures = exportSignatures;
+        //filteredExportSignatures = exportSignatures;
       } else {
         console.log('No filters active: exporting all fetched records.');
         filteredExportSignatures = exportSignatures;

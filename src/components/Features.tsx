@@ -1,4 +1,3 @@
-
 import { Zap, Shield, Rocket, Users, Code, BarChart } from "lucide-react";
 
 const features = [
