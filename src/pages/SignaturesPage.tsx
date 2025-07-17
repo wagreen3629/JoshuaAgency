@@ -208,7 +208,7 @@ export function SignaturesPage() {
       // Get all signatures with "Prepared" status and a valid email address
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const preparedSignatures = signatures.filter(sig => 
-        sig.status === 'Prepared' && emailRegex.test(sig.clientEmail)
+        (sig.status === 'Prepared' || sig.status === 'On Hold') && emailRegex.test(sig.clientEmail)
       );
       
       console.log('Found prepared signatures:', {
@@ -231,7 +231,6 @@ export function SignaturesPage() {
       if (!exportSignatures || !Array.isArray(exportSignatures)) {
         throw new Error('Failed to fetch signatures for export. Please try again.');
       }
-	  
       
       console.log('--- Export Triggered ---');
       console.log('fromDate:', fromDate);
@@ -239,6 +238,7 @@ export function SignaturesPage() {
       console.log('dateError:', dateError);
       console.log('searchTerm:', `"${searchTerm}"`);
       console.log('statusFilter:', statusFilter);
+      console.log('contractFilter:', contractFilter);
       
       // Determine if any filters are active
       const isFilterActive =
@@ -269,8 +269,6 @@ export function SignaturesPage() {
         count: filteredExportSignatures.length,
         ids: filteredExportSignatures.map(s => s.id)
       });
-
-
       
       if (filteredExportSignatures.length === 0) {
         throw new Error('No matching signatures found for export.');
@@ -324,6 +322,7 @@ export function SignaturesPage() {
             dropoffAddress: signature.dropoffAddress,
             status: signature.status,
             requestedDate: signature.requestedDate || '',
+            message: signature.message || '',
             guestName: signature.guestName || 'None',
             stops: signature.stops || [],
             uberDistance: isNaN(uberDistance) ? '0.00' : uberDistance.toFixed(2)
@@ -468,7 +467,9 @@ export function SignaturesPage() {
   const goToPrevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
 
   // Count signatures with "Prepared" status
-  const preparedCount = filteredSignatures.filter(sig => sig.status === 'Prepared').length;
+  const preparedCount = filteredSignatures.filter(sig => 
+				  sig.status === 'Prepared' || sig.status === 'On Hold'
+				).length;
 
   if (loading) {
     return (
@@ -513,7 +514,7 @@ export function SignaturesPage() {
         <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg transition-opacity duration-500">
           <p className="flex items-center">
             <FileSignature className="h-5 w-5 mr-2" />
-            Signatures have been exported to DocuSign successfully!
+            Signatures have been processed successfully.  Check for any signatures on hold to validate!
           </p>
         </div>
       )}
@@ -685,38 +686,46 @@ export function SignaturesPage() {
               </div>
               <div className="px-6 py-3 bg-gray-50 flex justify-between items-center">
                 <div className="text-sm text-gray-500">
-                  Requested: {formatDate(signature.requestedDate)}
+                  Requested: {formatDate(signature.requestedDate)}	
                 </div>
-                <div>
-                  {signature.status === 'Signed' && signature.signature && signature.signature.length > 0 && (
-                    <a
-                      href={(() => {
-                        try {
-                          // Validate URL
-                          const url = new URL(signature.signature[0].url);
-                          return url.toString();
-                        } catch (err) {
-                          console.error('Invalid signature URL:', err);
-                          return '#';
-                        }
-                      })()}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 flex items-center"
-                      title="View Signature Document"
-                      onClick={(e) => {
-                        if (e.currentTarget.getAttribute('href') === '#') {
-                          e.preventDefault();
-                          alert('Invalid signature URL');
-                        }
-                      }}
-                    >
-                      <FileSignature className="h-5 w-5 mr-1" />
-                      View Signature
-                      <ExternalLink className="h-4 w-4 ml-1" />
-                    </a>
-                  )}
-                </div>
+								 {signature.status === 'On Hold' &&  (
+								    <div className="text-sm font-medium text-red-600" title="Message">
+								      Message: {signature.message}
+								    </div>
+								  )}
+               <div>
+							  
+							  {signature.status === 'Signed' && 
+							   signature.signature && 
+							   signature.signature.length > 0 && (
+							    <a
+							      href={(() => {
+							        try {
+							          // Validate URL
+							          const url = new URL(signature.signature[0].url);
+							          return url.toString();
+							        } catch (err) {
+							          console.error('Invalid signature URL:', err);
+							          return '#';
+							        }
+							      })()}
+							      target="_blank"
+							      rel="noopener noreferrer"
+							      className="text-blue-600 hover:text-blue-800 flex items-center"
+							      title="View Signature Document"
+							      onClick={(e) => {
+							        if (e.currentTarget.getAttribute('href') === '#') {
+							          e.preventDefault();
+							          alert('Invalid signature URL');
+							        }
+							      }}
+							    >
+							      <FileSignature className="h-5 w-5 mr-1" />
+							      View Signature
+							      <ExternalLink className="h-4 w-4 ml-1" />
+							    </a>
+							  )}
+							</div>
               </div>
             </div>
           ))}

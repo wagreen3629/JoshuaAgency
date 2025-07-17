@@ -409,6 +409,7 @@ export interface Signature {
   createdTime: string;
   contractNum: number;
   contractName: string;
+	message: string;
   signature?: {
     url: string;
     filename: string;
@@ -452,6 +453,7 @@ export const fetchSignatures = async (): Promise<Signature[]> => {
       duration: record.get('Duration (min) (from Ride)') as number,
       status: record.get('Status') as string,
       requestedDate: record.get('Requested Date') as string,
+      message: record.get('Message') as string,
       guestName: record.get('Guest Name (from Ride)') as string,
       createdTime: record.createdTime,
       contractNum: record.get('Contract (from Client)') as number,
@@ -480,7 +482,7 @@ export const fetchSignaturesForExport = async (params?: SignatureExportParams): 
       throw new Error('Airtable base not initialized');
     }
 
-    let filterFormula = "AND({Status} = 'Prepared'";
+    let filterFormula = "AND(OR({Status} = 'Prepared',{Status} = 'On Hold')";
 
     // Add contract filter if provided
     if (params?.contractFilter && params.contractFilter !== 'all') {
@@ -538,6 +540,7 @@ export const fetchSignaturesForExport = async (params?: SignatureExportParams): 
       requestedDate: record.get('Request Date and Time (Local) (from Ride)') as string,
       guestName: record.get('Guest Name (from Ride)') as string,
       createdTime: record.createdTime,
+      message: record.get('Message') as string,
       signature: record.get('Signature') as { url: string; filename: string }[],
       stops: record.get('Stops') as string[],
       uberDistance: record.get('Uber Distance (mi) (from Ride)') as string,
