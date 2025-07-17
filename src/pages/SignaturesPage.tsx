@@ -51,12 +51,12 @@ export function SignaturesPage() {
     loadSignatures();
   }, []);
 
-  // Hide success message after 3 seconds
+  // Hide success message after 10 seconds
   useEffect(() => {
     if (exportSuccess) {
       const timer = setTimeout(() => {
         setExportSuccess(false);
-      }, 3000);
+      }, 10000);
       return () => clearTimeout(timer);
     }
   }, [exportSuccess]);

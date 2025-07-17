@@ -480,41 +480,40 @@ export const fetchSignaturesForExport = async (params?: SignatureExportParams): 
       throw new Error('Airtable base not initialized');
     }
 
-    let filterFormula = "{Status} = 'Prepared'";
+    let filterFormula = "AND({Status} = 'Prepared'";
 
+    // Add contract filter if provided
+    if (params?.contractFilter && params.contractFilter !== 'all') {
+      filterFormula += `, {Contract Name (from Contract) (from Client)} = '${params.contractFilter}'`;
+    }
+		
+		filterFormula += `)`;
+		
+		/* 
     // Add date range filter if dates are provided
     if (params?.fromDate && !params.dateError) {
       const fromDateStr = params.fromDate.toISOString();
-      filterFormula += ` AND IS_AFTER({Drop-Off Date (Local) (from Ride)}, '${fromDateStr}')`;
+      filterFormula += `, IS_AFTER({Drop-Off Date (Local) (from Ride)}, '${fromDateStr}')`;
     }
     
     if (params?.toDate && !params.dateError) {
       const toDateStr = params.toDate.toISOString();
-      filterFormula += ` AND IS_BEFORE({Drop-Off Date (Local) (from Ride)}, '${toDateStr}')`;
-    }
-
-    // Add contract filter if provided
-    if (params?.contractFilter && params.contractFilter !== 'all') {
-      filterFormula += ` AND {Contract Name (from Contract) (from Client)} = '${params.contractFilter}'`;
+      filterFormula += `, IS_BEFORE({Drop-Off Date (Local) (from Ride)}, '${toDateStr}')`;
     }
 
     // Add status filter if provided
     if (params?.statusFilter && params.statusFilter !== 'all') {
-      filterFormula += ` AND {Status} = '${params.statusFilter}'`;
+      filterFormula += `, {Status} = '${params.statusFilter}'`;
     }
 
-    // Add search term filter if provided
+    //Add search term filter if provided
     if (params?.searchTerm) {
       const term = params.searchTerm.replace(/'/g, "\\'");
-      filterFormula += ` AND (
-        FIND('${term}', LOWER({Client Name (from Client)})) > 0 OR
-        FIND('${term}', LOWER({Client Email (from Client)})) > 0 OR
-        FIND('${term}', LOWER({City (from Ride)})) > 0 OR
-        FIND('${term}', LOWER({Pickup Address (from Ride)})) > 0 OR
-        FIND('${term}', LOWER({Drop-off Address (from Ride)})) > 0 OR
-        FIND('${term}', LOWER({Guest Name (from Ride)})) > 0
-      )`;
+      filterFormula += `, (LOWER(FIND('${term}')), LOWER({Client Name}) > 0)`;
     }
+		*/
+
+		//filterFormula = "CONTAINS(LOWER({Client Name}), 'green')";
 
     console.log('Using filter formula:', filterFormula);
 
