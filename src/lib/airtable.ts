@@ -553,6 +553,39 @@ export const fetchSignaturesForExport = async (params?: SignatureExportParams): 
   }
 };
 
+//Delete signatures functions
+export const deleteSignature = async (id: string): Promise<{ success: boolean; error?: string }> => {
+  try {
+    if (!base) {
+      throw new Error('Airtable base not initialized');
+    }
+
+    // First verify the signature exists and get its status
+    const record = await base('Signatures').find(id);
+    if (!record) {
+      return { success: false, error: 'Signature not found' };
+    }
+
+    const status = record.get('Status') as string;
+    
+    // Prevent deletion of signed signatures
+    if (status === 'Signed') {
+      return { 
+        success: false, 
+        error: 'Cannot delete signed signatures' 
+      };
+    }
+
+    await base('Signatures').destroy(id);
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting signature:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to delete signature' 
+    };
+  }
+};
 
 
 // Client interfaces

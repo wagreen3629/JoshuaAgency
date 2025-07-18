@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { FileSignature, Plus, Search, Filter, Calendar, MapPin, Clock, Route, FileDown, Mail, AlertCircle, Users, ExternalLink, Check } from 'lucide-react';
+import { FileSignature, Plus, Search, Filter, Calendar, MapPin, Clock, Route, FileDown, Mail, AlertCircle, Users, ExternalLink, Check, Trash2 } from 'lucide-react';
 import { Button } from '../components/Button';
-import { fetchSignatures, fetchSignaturesForExport, fetchContracts, Signature, Contract } from '../lib/airtable';
+import { fetchSignatures, fetchSignaturesForExport, fetchContracts, Signature, Contract, deleteSignature } from '../lib/airtable';
 import { DateRangePicker } from '../components/DateRangePicker';
 import { startOfDay, endOfDay, isValid } from 'date-fns';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, 
+         AlertDialogContent, AlertDialogDescription, 
+         AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../components/ui/alert-dialog';
+import { useToast } from '../hooks/use-toast';
 
 export function SignaturesPage() {
   const [signatures, setSignatures] = useState<Signature[]>([]);
@@ -16,6 +20,9 @@ export function SignaturesPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [exporting, setExporting] = useState(false);
   const [exportSuccess, setExportSuccess] = useState(false);
+  const [signatureToDelete, setSignatureToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
   
   // Date range state
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
@@ -403,6 +410,40 @@ export function SignaturesPage() {
   const handleEmailClick = (email: string) => {
     window.location.href = `mailto:${email}`;
   };
+  
+  const handleDeleteSignature = async () => {
+    if (!signatureToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      const { success, error } = await deleteSignature(signatureToDelete);
+      
+      if (success) {
+        toast({
+          title: 'Success',
+          description: 'Signature deleted successfully',
+          variant: 'default',
+        });
+        await loadSignatures();
+      } else {
+        toast({
+          title: 'Error',
+          description: error || 'Failed to delete signature',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'An unexpected error occurred',
+        variant: 'destructive',
+      });
+      console.error('Error deleting signature:', error);
+    } finally {
+      setIsDeleting(false);
+      setSignatureToDelete(null);
+    }
+  };  
 
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return 'N/A';
@@ -685,50 +726,61 @@ export function SignaturesPage() {
                 </div>
               </div>
               <div className="px-6 py-3 bg-gray-50 flex justify-between items-center">
-                <div className="text-sm text-gray-500">
-                  Requested: {formatDate(signature.requestedDate)}	
-                </div>
-								 {signature.status === 'On Hold' &&  (
-								    <div className="text-sm font-medium text-red-600" title="Message">
-								      Message: {signature.message}
-								    </div>
-								  )}
-               <div>
-							  
-							  {signature.status === 'Signed' && 
-							   signature.signature && 
-							   signature.signature.length > 0 && (
-							    <a
-							      href={(() => {
-							        try {
-							          // Validate URL
-							          const url = new URL(signature.signature[0].url);
-							          return url.toString();
-							        } catch (err) {
-							          console.error('Invalid signature URL:', err);
-							          return '#';
-							        }
-							      })()}
-							      target="_blank"
-							      rel="noopener noreferrer"
-							      className="text-blue-600 hover:text-blue-800 flex items-center"
-							      title="View Signature Document"
-							      onClick={(e) => {
-							        if (e.currentTarget.getAttribute('href') === '#') {
-							          e.preventDefault();
-							          alert('Invalid signature URL');
-							        }
-							      }}
-							    >
-							      <FileSignature className="h-5 w-5 mr-1" />
-							      View Signature
-							      <ExternalLink className="h-4 w-4 ml-1" />
-							    </a>
-							  )}
-							</div>
-              </div>
+            <div className="text-sm text-gray-500">
+              Requested: {formatDate(signature.requestedDate)}	
             </div>
-          ))}
+            <div className="flex items-center space-x-2">
+              {signature.status === 'On Hold' && (
+                <div className="text-sm font-medium text-red-600" title="Message">
+                  Message: {signature.message}
+                </div>
+              )}
+              
+              {signature.status === 'Signed' && 
+               signature.signature && 
+               signature.signature.length > 0 && (
+                <a
+                  href={(() => {
+                    try {
+                      const url = new URL(signature.signature[0].url);
+                      return url.toString();
+                    } catch (err) {
+                      console.error('Invalid signature URL:', err);
+                      return '#';
+                    }
+                  })()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 flex items-center"
+                  title="View Signature Document"
+                  onClick={(e) => {
+                    if (e.currentTarget.getAttribute('href') === '#') {
+                      e.preventDefault();
+                      alert('Invalid signature URL');
+                    }
+                  }}
+                >
+                  <FileSignature className="h-5 w-5 mr-1" />
+                  View Signature
+                  <ExternalLink className="h-4 w-4 ml-1" />
+                </a>
+              )}
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSignatureToDelete(signature.id);
+                }}
+                className="text-red-600 hover:text-red-800 flex items-center p-1 rounded hover:bg-red-50 transition-colors"
+                title="Delete Signature"
+                disabled={signature.status === 'Signed'}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
           
           {/* Pagination */}
           {filteredSignatures.length > itemsPerPage && (
@@ -787,6 +839,9 @@ export function SignaturesPage() {
           )}
         </div>
       )}
+
+			
+			
       
       <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h3 className="text-md font-medium text-blue-800">About Digital Signatures</h3>
@@ -795,6 +850,28 @@ export function SignaturesPage() {
           Your signatures are securely stored and can be used across all documents in the system.
         </p>
       </div>
+			
+			<AlertDialog open={!!signatureToDelete} onOpenChange={(open) => !open && setSignatureToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this signature? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteSignature}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 focus-visible:ring-red-600"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+			
     </div>
   );
 }
